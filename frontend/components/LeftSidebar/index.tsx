@@ -47,6 +47,18 @@ const LeftSidebar = ({
 
     const navigation = [
         {
+            title: "Home",
+            icon: "home",
+            color: "fill-accent-2",
+            url: "/home",
+        },
+        {
+            title: "Documents",
+            icon: "document",
+            color: "fill-accent-2",
+            url: "/documents",
+        },
+        {
             title: "Chats",
             icon: "chat",
             color: "fill-accent-2",
