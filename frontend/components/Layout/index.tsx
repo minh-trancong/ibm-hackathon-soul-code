@@ -8,17 +8,22 @@ import LeftSidebar from "@/components/LeftSidebar";
 import RightSidebar from "@/components/RightSidebar";
 import Icon from "@/components/Icon";
 import Burger from "./Burger";
+import RecentDocumentsSidebar from "@/components/RecentDocumentsSidebar";
 
+// Update the LayoutProps type to include the new prop
 type LayoutProps = {
     smallSidebar?: boolean;
     hideRightSidebar?: boolean;
+    showRecentDocumentSideBar?: boolean;
     backUrl?: string;
     children: React.ReactNode;
 };
 
+// Update the Layout component to handle the new prop
 const Layout = ({
     smallSidebar,
     hideRightSidebar,
+    showRecentDocumentSideBar,
     backUrl,
     children,
 }: LayoutProps) => {
@@ -105,15 +110,22 @@ const Layout = ({
                             {children}
                         </div>
                         {!hideRightSidebar && (
-                            <RightSidebar
-                                className={`
-                                ${
-                                    !visibleSidebar &&
-                                    "md:translate-x-64 md:before:absolute md:before:z-30 md:before:inset-0"
-                                }
-                            `}
-                                visible={visibleRightSidebar}
-                            />
+                            showRecentDocumentSideBar ? (
+                                <RecentDocumentsSidebar
+                                    className="custom-class"
+                                    visible={true}
+                                />
+                            ) : (
+                                <RightSidebar
+                                    className={`
+                                    ${
+                                        !visibleSidebar &&
+                                        "md:translate-x-64 md:before:absolute md:before:z-30 md:before:inset-0"
+                                    }
+                                `}
+                                    visible={visibleRightSidebar}
+                                />
+                            )
                         )}
                     </div>
                 </div>

@@ -15,6 +15,6 @@ export const documentOptions = [
         title: "Q&A about documents",
         icon: "chat",
         color: "#8A2BE2",
-        url: "/qa-documents",
+        url: "/",
     },
 ];
