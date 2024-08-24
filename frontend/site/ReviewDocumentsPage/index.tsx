@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import Layout from "@/components/Layout";
 import Icon from "@/components/Icon";
 import HorizontalMenu from "@/components/HorizontalMenu";
-import TagList from "@/components/TagList";
 import Card from "@/components/Card";
 import { documents } from "@/mocks/documents"; // Import the documents data
 import { reviewOptions } from "@/constants/review-options";

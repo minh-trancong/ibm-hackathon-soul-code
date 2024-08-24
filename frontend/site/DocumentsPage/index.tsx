@@ -1,4 +1,5 @@
-import { useState } from "react";
+// frontend/site/DocumentsPage/index.tsx
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Layout from "@/components/Layout";
 import Icon from "@/components/Icon";
@@ -8,10 +9,25 @@ import HorizontalMenu from "@/components/HorizontalMenu";
 import TagList from "@/components/TagList";
 import Card from "@/components/Card";
 import { documents } from "@/mocks/documents"; // Import the documents data
+import DocumentDetailPage from "@/site/DocumentDetailPage"; // Import the DocumentDetailPage component
+import { DocumentType } from "@/types/DocumentType"; // Import the DocumentType
 
 const DocumentsPage = () => {
     const [search, setSearch] = useState<string>("");
     const router = useRouter();
+    const { id } = router.query;
+    const [document, setDocument] = useState<DocumentType | null>(null);
+
+    useEffect(() => {
+        if (id) {
+            const doc = documents.find((doc) => doc.id === id);
+            setDocument(doc || null);
+        }
+    }, [id]);
+
+    if (id && document) {
+        return <DocumentDetailPage document={document} />;
+    }
 
     return (
         <Layout hideRightSidebar>
