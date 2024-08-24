@@ -215,3 +215,15 @@ code {
     border-radius: 4px;
     padding: 2px 4px;
 }
+
+.btn-overlay {
+    background-color: white;
+    color: black;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    transition: background-color 0.7s;
+}
+
+.btn-overlay:hover {
+    background-color: #f0f0f0;
+}
