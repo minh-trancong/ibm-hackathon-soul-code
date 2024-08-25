@@ -63,12 +63,16 @@ async def get_tags(summary):
 
 @app.post("/documents/")
 async def create_document(doc: DocItem):
-
     file_path = doc.doc_url
     if file_path is not None:
-        title, summary, text = await doc_summary(file_path)
+        file_type = file_path.split(".")[-1]
+        if file_type in ["png", "jpg", "jpeg"]:
+            title, summary = await AICore.get_img_detail(file_path)
+            embed_module.post_embed_img(summary)
+        else:
+            title, summary, text = await doc_summary(file_path)
+            embed_module.post_embed_doc(doc.doc_id, doc.user_id, text)
         tags = await get_tags(summary)
-        embed_module.post_embed_doc(doc.doc_id, doc.user_id, text)
         return {"title": title, "summary": summary, "tags": tags}
     return {"title": "", "summary": "", "tags": []}
 
