@@ -1,4 +1,3 @@
-from langchain.text_splitter import RecursiveCharacterTextSplitter
 import unstructured_client
 from unstructured_client.models import operations, shared
 
@@ -37,15 +36,3 @@ def extract_text(file_path):
         print(e)
         return "", []
 
-
-def chunk_text(text, chunk_size=1000, chunk_overlap=100):
-    """
-    Phân chia văn bản thành các chunk nhỏ hơn.
-
-    :param text: Văn bản cần phân chia
-    :param chunk_size: Kích thước tối đa của mỗi chunk
-    :param chunk_overlap: Kích thước chồng lấp giữa các chunk
-    :return: Danh sách các chunk văn bản
-    """
-    splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
-    return splitter.split(text)

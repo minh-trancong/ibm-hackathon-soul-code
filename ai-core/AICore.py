@@ -10,6 +10,7 @@ from ibm_watsonx_ai.metanames import GenTextParamsMetaNames as GenParams
 
 from db.qdrant import Qdrant
 from doc_process.doc_process import extract_text
+from doc_process.image_process import get_img_detail
 
 apikey = "eNm1192jAWpKDnh7dkL-XB46y2-2otNAiASGGSGLyeYz"
 project_id = "0e1ec565-5a03-4411-9046-06a2a89ae93d"
@@ -26,10 +27,12 @@ parameters_sum = {
 
 parameters_chat = {
     GenParams.DECODING_METHOD: "greedy",
-    GenParams.MAX_NEW_TOKENS: 4000,
+    GenParams.MAX_NEW_TOKENS: 1000,
     GenParams.REPETITION_PENALTY: 1.05,
-    GenParams.TEMPERATURE: 1,
+    GenParams.TEMPERATURE: 0.7,
+    GenParams.STOP_SEQUENCES: ["\n\n"],
 }
+
 model_id = ModelTypes.GRANITE_13B_CHAT_V2
 model_sum = Model(
     model_id=model_id,
@@ -45,9 +48,11 @@ model_chat = Model(
     project_id=project_id,
 )
 
+DB = Qdrant()
+
 
 class EmbedModule:
-    def __init__(self, apikey=apikey, project_id=project_id, db=Qdrant()):
+    def __init__(self, apikey=apikey, project_id=project_id, db=DB):
         embed_params = {
             EmbedParams.TRUNCATE_INPUT_TOKENS: 3,
             EmbedParams.RETURN_OPTIONS: {"input_text": True},
@@ -81,6 +86,17 @@ class EmbedModule:
                 }
             )
 
+    async def post_embed_img(self, doc_id, user_id, text):
+        img_detail_embed = self.get_embedding(text)
+        self.db.add_point(
+            {
+                "vec": img_detail_embed,
+                "doc_id": doc_id,
+                "user_id": user_id,
+                "summary": text,
+            }
+        )
+
     def get_info(self, text):
         embedding = self.get_embedding(text)
         infos = [point.payload["summary"] for point in self.db.search(embedding)]
@@ -92,7 +108,7 @@ class Session:
         self.model = model_chat
         self.embedModel = EmbedModule()
         self.instruction = """
-        You are Soulcode, an AI language model designed for the Second Brain platform. You are a cautious assistant who meticulously follows instructions. You are helpful, harmless, and adhere strictly to ethical guidelines while promoting positive behavior. You always respond to greetings (e.g., "hi," "hello," "good day," "morning," "afternoon," "evening," "night," "what's up," "nice to meet you," "sup," etc.) with "Hello! I am Soulcode, your virtual assistant on Second Brain. How can I assist you today?" Please do not say anything else and do not initiate conversations
+        You are Soulcode, an AI language model designed for the Second Brain platform. You are a cautious assistant who meticulously follows instructions. You are helpful, harmless, and adhere strictly to ethical guidelines while promoting positive behavior. You always respond to greetings (e.g., "hi," "hello," "good day," "morning," "afternoon," "evening," "night," "what's up," "nice to meet you," "sup," etc.) with "Hello! I am Soulcode, your virtual assistant on Second Brain. How can I assist you today?" Please do not say anything else and do not initiate conversations. Short answer.
         """
 
     def get_response(self, question):
@@ -109,6 +125,18 @@ class Session:
         return self.model.generate_text(ques)
 
 
+class ReviewDocModule:
+    def __init__(self, doc, model_chat=model_chat, min_doc_size=10000):
+        self.model = model_chat
+        self.min_doc_size = min_doc_size
+        self.doc_size = len(doc)
+        self.doc = doc
+
+    def get_response(self, question):
+        if self.doc_size <= self.min_doc_size:
+            self.doc = self.doc[:self.min_doc_size]
+        instruction = "You will act as an intelligent assistant whose task is to answer questions based on the following the document:\n" + self.doc
+        return self.model.generate_text(instruction)
 def doc_summary(file_path):
     text, chunks = extract_text(file_path)
 
@@ -117,12 +145,12 @@ def doc_summary(file_path):
     if text == "":
         return "", ""
     instruction = (
+            """
+        You are an expert in summarizing documents and generating concise titles and summaries. Your task is to analyze the provided document and create a clear, brief title and summary that captures the main points of the content. Output follow the format:
+        {"title": title, "summary": summary}
+        If document can not be summarized, answer in this format: {"title": "empty", "summary": "empty"}
         """
-    You are an expert in summarizing documents and generating concise titles and summaries. Your task is to analyze the provided document and create a clear, brief title and summary that captures the main points of the content. Output follow the format:
-    {"title": title, "summary": summary}
-    If document can not be summarized, answer in this format: {"title": "empty", "summary": "empty"}
-    """
-        + f""""
+            + f""""
     Input: {text}
     Output:
     """
@@ -133,6 +161,10 @@ def doc_summary(file_path):
 
     title, summary = result["title"], result["summary"]
     return title, summary, chunks
+
+
+def img_summary(file_path):
+    return get_img_detail(file_path)
 
 
 def chunk_summary(chunks):
@@ -157,16 +189,11 @@ def chunk_summary(chunks):
 def get_tags(summary):
     def get_prompt(text):
         instruction = (
-            """
-        You are an expert in content categorization, specializing in identifying broad topics and major fields of study. Your task is to analyze the provided document and generate five tags that represent the primary categories or major fields relevant to the document. Please provide the output follow this JSON format:
-        ["tag1", "tag2", ...]
-        If no text to get tags answer that: []
-        """
-            + f"""
-        
-        Input: {text}
-        Output:
-        """
+                """
+            You are an expert in content categorization, specializing in identifying broad topics and major fields of study. Your task is to analyze the provided document and generate five tags that represent the primary categories or major fields relevant to the document. Please provide the output follow this JSON format:
+            ["tag1", "tag2", ...]
+            If text can't get tags answer: []
+            """ + f"\nInput: {text} \nOutput:"
         )
         return instruction
 
