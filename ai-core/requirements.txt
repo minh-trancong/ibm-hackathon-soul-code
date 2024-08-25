@@ -4,4 +4,4 @@ pydantic~=2.8.2
 ibm_watsonx_ai~=1.1.6
 qdrant-client
 unstructured-client
-
+langchain

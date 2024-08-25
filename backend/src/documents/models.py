@@ -25,19 +25,18 @@ class DocumentModel(SQLModel, table=True):
     review_date: datetime | None = None
     editable: bool | None = None
     summary: str | None = None
+
+    user_id: str | None = Field(default=None, foreign_key="users.id")
+
     tags: list[TagModel] = Relationship(
         back_populates="documents",
         link_model=DocumentTagModel,
     )
 
-    tag_links: list[DocumentTagModel] = Relationship(
-        back_populates="documents", cascade_delete=True
-    )
-
 
 class DocumentGet(SQLModel):
     id: str
-    title: str
+    title: str | None = None
     path: str | None = None
     thumbnail: str | None = None
     review_date: datetime | None = None

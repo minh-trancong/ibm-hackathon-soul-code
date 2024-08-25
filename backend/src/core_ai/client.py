@@ -14,16 +14,14 @@ class CoreAIClient:
 
     def chat(self, message: str) -> str:
 
-        chat_endpoint = f"{self.endpoint}/chat"
+        chat_endpoint = f"{self.endpoint}/chat/"
 
         response = requests.post(chat_endpoint, json={"message": message})
-
-        print(response)
 
         return response.json()["message"]
 
     def send_document(self, document_id: str, user_id: str, path: str):
-        document_endpoint = f"{self.endpoint}/documents"
+        document_endpoint = f"{self.endpoint}/documents/"
 
         response = requests.post(
             document_endpoint,

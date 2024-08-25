@@ -12,15 +12,20 @@ from src.user.models import UserCreate, UserModel, UserGet
 from src.database import DBAdapter
 
 from src.documents import util
+from src.core_ai.client import CoreAIClient
 
 router = APIRouter()
 
 FS_PATH = "/var/lib/brain/documents/"
 
+core_ai_client = CoreAIClient()
+
 
 @router.post("/")
 async def create_document(
-    title: Optional[str] = Form(...), file: UploadFile = File(...)
+    user_id: Optional[str] = Form(default=None),
+    title: Optional[str] = Form(default=None),
+    file: UploadFile = File(...),
 ):
     unique_filename = f"{uuid4()}_{file.filename}"
 
@@ -48,6 +53,7 @@ async def create_document(
                 title=title,
                 editable=editable,
                 path=file_path,
+                user_id=None,
                 thumbnail=None,
                 review_date=None,
                 summary=None,
@@ -55,6 +61,43 @@ async def create_document(
             )
 
             session.add(document)
+
+            session.commit()
+
+            ai_info = core_ai_client.send_document(
+                document_id=document.id, user_id=user_id, path=file_path
+            )
+
+            # Create tag if tag does not exist
+
+            tag_models = session.query(TagModel).all()
+
+            tags = [tag_model.name for tag_model in tag_models]
+
+            ai_tags = ai_info["tags"]
+
+            new_tags = list(set(ai_tags) - set(tags))
+
+            new_tags_model = [TagModel(name=new_tag) for new_tag in new_tags]
+
+            session.add_all(new_tags_model)
+            session.commit()
+
+            # Get all tag model from AI tags
+
+            tag_models = session.query(TagModel).all()
+
+            ai_tag_models = []
+
+            for tag_model in tag_models:
+                if tag_model.name in ai_tags:
+                    ai_tag_models.append(tag_model)
+
+            document = session.query(DocumentModel).filter_by(id=document.id).first()
+
+            document.title = ai_info["title"]
+            document.summary = ai_info["summary"]
+            document.tags = ai_tag_models
 
             session.commit()
 
