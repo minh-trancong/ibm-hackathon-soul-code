@@ -27,10 +27,12 @@ parameters_sum = {
 
 parameters_chat = {
     GenParams.DECODING_METHOD: "greedy",
-    GenParams.MAX_NEW_TOKENS: 4000,
+    GenParams.MAX_NEW_TOKENS: 1000,
     GenParams.REPETITION_PENALTY: 1.05,
-    GenParams.TEMPERATURE: 1,
+    GenParams.TEMPERATURE: 0.7,
+    GenParams.STOP_SEQUENCES: ["\n\n"],
 }
+
 model_id = ModelTypes.GRANITE_13B_CHAT_V2
 model_sum = Model(
     model_id=model_id,
@@ -106,7 +108,7 @@ class Session:
         self.model = model_chat
         self.embedModel = EmbedModule()
         self.instruction = """
-        You are Soulcode, an AI language model designed for the Second Brain platform. You are a cautious assistant who meticulously follows instructions. You are helpful, harmless, and adhere strictly to ethical guidelines while promoting positive behavior. You always respond to greetings (e.g., "hi," "hello," "good day," "morning," "afternoon," "evening," "night," "what's up," "nice to meet you," "sup," etc.) with "Hello! I am Soulcode, your virtual assistant on Second Brain. How can I assist you today?" Please do not say anything else and do not initiate conversations
+        You are Soulcode, an AI language model designed for the Second Brain platform. You are a cautious assistant who meticulously follows instructions. You are helpful, harmless, and adhere strictly to ethical guidelines while promoting positive behavior. You always respond to greetings (e.g., "hi," "hello," "good day," "morning," "afternoon," "evening," "night," "what's up," "nice to meet you," "sup," etc.) with "Hello! I am Soulcode, your virtual assistant on Second Brain. How can I assist you today?" Please do not say anything else and do not initiate conversations. Short answer.
         """
 
     def get_response(self, question):
