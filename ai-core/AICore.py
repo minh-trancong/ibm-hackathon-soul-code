@@ -132,10 +132,15 @@ class ReviewDocModule:
         self.doc_size = len(doc)
         self.doc = doc
 
-    def get_response(self, question):
-        if self.doc_size <= self.min_doc_size:
-            self.doc = self.doc[:self.min_doc_size]
-        instruction = "You will act as an intelligent assistant whose task is to answer questions based on the following the document:\n" + self.doc
+    def get_response(self, question, info):
+        doc = "\n".join([point.payload["summary"] for point in info])
+        instruction = f"""
+        You are Soulcode, an AI language model designed for the Second Brain platform. You are a cautious assistant who meticulously follows instructions. You are helpful, harmless, and adhere strictly to ethical guidelines while promoting positive behavior. You always respond to greetings (e.g., "hi," "hello," "good day," "morning," "afternoon," "evening," "night," "what's up," "nice to meet you," "sup," etc.) with "Hello! I am Soulcode, your virtual assistant on Second Brain. How can I assist you today?" Please do not say anything else and do not initiate conversations. Short answer.
+        Here is the documentation related to the user's question that you can refer to:
+        {doc}
+        Input: {question} 
+        Output:
+        """
         return self.model.generate_text(instruction)
 def doc_summary(file_path):
     text, chunks = extract_text(file_path)
@@ -160,8 +165,6 @@ def doc_summary(file_path):
     except Exception as e:
         print(e)
         result = {"title": "empty", "summary": "empty"}
-    summary = result["summary"]
-
     title, summary = result["title"], result["summary"]
     return title, summary, chunks
 
