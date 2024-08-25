@@ -155,8 +155,11 @@ def doc_summary(file_path):
     Output:
     """
     )
-    result = literal_eval(model_sum.generate_text(instruction))
-
+    try:
+        result = literal_eval(model_sum.generate_text(instruction))
+    except Exception as e:
+        print(e)
+        result = {"title": "empty", "summary": "empty"}
     summary = result["summary"]
 
     title, summary = result["title"], result["summary"]
@@ -196,6 +199,9 @@ def get_tags(summary):
             """ + f"\nInput: {text} \nOutput:"
         )
         return instruction
-
-    result = literal_eval(model_sum.generate_text(get_prompt(summary)))
+    try:
+        result = literal_eval(model_sum.generate_text(get_prompt(summary)))
+    except Exception as e:
+        print(e)
+        result = []
     return result
