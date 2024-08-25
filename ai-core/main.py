@@ -6,6 +6,7 @@ from pydantic import BaseModel
 
 import AICore
 from db.qdrant import Qdrant
+from doc_process.doc_process import extract_text
 
 
 def download_file(url, save_dir="./assets"):
@@ -50,9 +51,6 @@ class DocItem(BaseModel):
 class ChatRequest(BaseModel):
     message: str
 
-class DocReviewed(BaseModel):
-    doc: str
-
 DB = Qdrant()
 
 
@@ -88,9 +86,15 @@ async def chat(request: ChatRequest):
     return {"message": response}
 
 @app.post("/chat/start_rv") # khi bắt đầu review 1 doc thì dùng endpoint này đầu tiên
-async def start_review(request: DocReviewed):
+async def start_review(doc: DocItem):
     global ReviewDocModule
-    doc = request.doc
+    file_path = doc.doc_url
+    if file_path is not None:
+        file_type = file_path.split(".")[-1]
+        if file_type in ["png", "jpg", "jpeg"]:
+            title, doc = await AICore.get_img_detail(file_path)
+        else:
+            doc = extract_text(file_path)
     ReviewDocModule = AICore.ReviewDocModule(doc)
     return {"success": True}
 
