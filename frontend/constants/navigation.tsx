@@ -1,32 +1,38 @@
 export const navigation = [
     {
-        title: "AI Tư vấn mua Laptop",
-        icon: "trophy",
-        color: "#0084FF",
-        url: "/education-feedback",
+        title: "Upload Documents",
+        icon: "upload",
+        color: "#FF5733",
+        url: "/upload-document",
     },
-    // {
-    //     title: "Photo editing",
-    //     icon: "image-check",
-    //     color: "#8E55EA",
-    //     url: "/photo-editing",
-    // },
-    // {
-    //     title: "Video generation",
-    //     icon: "play-circle",
-    //     color: "#D84C10",
-    //     url: "/video-generation",
-    // },
-    // {
-    //     title: "Code generation",
-    //     icon: "codepen",
-    //     color: "#52BA69",
-    //     url: "/code-generation",
-    // },
-    // {
-    //     title: "Audio generation",
-    //     icon: "music-note",
-    //     color: "#E68A1D",
-    //     url: "/audio-generation",
-    // },
+    {
+        title: "Manage Documents",
+        icon: "collections",
+        color: "#33C3FF",
+        url: "/manage-documents",
+    },
+    {
+        title: "Check Tags",
+        icon: "tag",
+        color: "#8A2BE2",
+        url: "/check-tags",
+    },
+    {
+        title: "Chat with AI",
+        icon: "chat",
+        color: "#0084FF",
+        url: "/chat-with-ai",
+    },
+    {
+        title: "Review Documents",
+        icon: "calendar",
+        color: "#E68A1D",
+        url: "/review-documents",
+    },
+    {
+        title: "Smart Language Learning",
+        icon: "country",
+        color: "#52BA69",
+        url: "/smart-language-learning",
+    },
 ];

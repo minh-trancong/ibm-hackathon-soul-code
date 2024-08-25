@@ -14,6 +14,8 @@ import Layout from "@/components/Layout";
 import Icon from "@/components/Icon";
 import TurndownService from "turndown";
 import {Node} from 'domhandler';
+import {API_ENDPOINTS} from '@/utils/apiConfig';
+import axios from "axios";
 
 const WriteNotePage = () => {
     const editor = useEditor({
@@ -46,18 +48,25 @@ const WriteNotePage = () => {
         const html = editor.getHTML();
         const markdown = turndownService.turndown(html);
 
-        // Create a Blob from the markdown content
-        const blob = new Blob([markdown], {type: "text/markdown"});
-        const url = URL.createObjectURL(blob);
+        const formData = new FormData();
+        formData.append('user_id', '5f5e6c37-b453-4686-8742-5c6e223153a7');
+        formData.append('title', 'Untitled Note');
+        formData.append('file', new Blob([markdown], {type: 'text/markdown'}));
 
-        // Create a link element and trigger the download
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "note.md";
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        try {
+            const response = await axios.post(API_ENDPOINTS.UPLOAD_DOCUMENT, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            alert('Document uploaded successfully:' + response.data);
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response) {
+                alert('Error uploading document:' + error.response.data);
+            } else {
+                alert('Error uploading document:' + error);
+            }
+        }
     };
 
     return (

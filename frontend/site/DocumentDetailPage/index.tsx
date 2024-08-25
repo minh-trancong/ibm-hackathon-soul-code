@@ -1,8 +1,10 @@
 // frontend/site/DocumentDetailPage/index.tsx
-import React, {useRef} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Layout from "@/components/Layout";
 import html2canvas from "html2canvas";
 import TagList from "@/components/TagList";
+import axios from "axios";
+import {API_ENDPOINTS} from "@/utils/apiConfig";
 
 type DocumentType = {
     id: string;
@@ -18,6 +20,29 @@ type DocumentDetailPageProps = {
 
 const DocumentDetailPage = ({document}: DocumentDetailPageProps) => {
     const pageRef = useRef<HTMLDivElement>(null);
+    const [content, setContent] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchContent = async () => {
+            try {
+                const response = await axios.get(`${API_ENDPOINTS.GET_CONTENT}${document.id}`, {
+                    responseType: 'blob'
+                });
+                const contentType = response.headers['content-type'];
+                if (contentType === 'image/png') {
+                    const imageUrl = URL.createObjectURL(response.data);
+                    setContent(imageUrl);
+                } else {
+                    const textContent = await response.data.text();
+                    setContent(textContent);
+                }
+            } catch (error) {
+                console.error("Error fetching document content:", error);
+            }
+        };
+
+        fetchContent();
+    }, [document.id]);
 
     const captureThumbnail = async () => {
         if (pageRef.current) {
@@ -47,6 +72,15 @@ const DocumentDetailPage = ({document}: DocumentDetailPageProps) => {
                         {document.summary}
                         <TagList tags={document.tags} hideViewAll/>
                     </p>
+                </div>
+                <div className="content-section">
+                    {content && (
+                        content.startsWith("blob:") ? (
+                            <img src={content} alt="Document Content" className="custom-img"/>
+                        ) : (
+                            <code>{content}</code>
+                        )
+                    )}
                 </div>
                 <div className="mt-auto">
                     <button

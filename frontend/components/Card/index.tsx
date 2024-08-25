@@ -33,7 +33,7 @@ const Card = ({ document }: CardProps) => {
         <div className="md:w-1/3 p-4 box-border relative group">
             <div className="relative p-6 bg-white border border-gray-300 rounded-lg transition-shadow duration-300 hover:shadow-md dark:bg-gray-800">
                 <div className="flex flex-col mb-2 md:mb-6">
-                    <img src={document.image} alt={document.title} className="w-full h-32 object-cover mb-4" />
+                    <img src="/images/soulcode-code-back.png" alt={document.title} className="w-full h-32 object-cover mb-4" />
                     <h2 className="text-left font-bold">{document.title}</h2>
                 </div>
                 <p className="mb-4 text-gray-600 dark:text-gray-400">{document.summary}</p>

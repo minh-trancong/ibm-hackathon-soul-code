@@ -227,3 +227,12 @@ code {
 .btn-overlay:hover {
     background-color: #f0f0f0;
 }
+
+.custom-img {
+    width: 30% !important;
+}
+
+/* Ensure the parent container allows the child to stretch */
+html, body, #__next {
+    height: 100%;
+}

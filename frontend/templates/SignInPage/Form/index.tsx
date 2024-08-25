@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Tab } from "@headlessui/react";
 import { useColorMode } from "@chakra-ui/color-mode";
 import Logo from "@/components/Logo";
