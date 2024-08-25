@@ -36,6 +36,7 @@ def download_file(url, save_dir="./assets"):
 
 
 embed_module = AICore.EmbedModule()
+ReviewDocModule = AICore.ReviewDocModule("")
 
 app = FastAPI()
 
@@ -49,6 +50,8 @@ class DocItem(BaseModel):
 class ChatRequest(BaseModel):
     message: str
 
+class DocReviewed(BaseModel):
+    doc: str
 
 DB = Qdrant()
 
@@ -84,6 +87,19 @@ async def chat(request: ChatRequest):
     response = session.get_response(message)
     return {"message": response}
 
+@app.post("/chat/start_rv") # khi bắt đầu review 1 doc thì dùng endpoint này đầu tiên
+async def start_review(request: DocReviewed):
+    global ReviewDocModule
+    doc = request.doc
+    ReviewDocModule = AICore.ReviewDocModule(doc)
+    return {"success": True}
+
+@app.post("/chat/review_doc")
+async def chat_review_doc(request: ChatRequest):
+    global ReviewDocModule
+    message = request.message
+    response = ReviewDocModule.get_response(message)
+    return {"message": response}
 
 @app.delete("/documents/{document_id}")
 async def delete_document(document_id: str):
