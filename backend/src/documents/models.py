@@ -24,7 +24,7 @@ class DocumentModel(SQLModel, table=True):
     thumbnail: str | None = None
     review_date: datetime | None = None
     editable: bool | None = None
-    summary: str | None = None
+    summary: str | None = Field(default=None, max_length=65000)
 
     user_id: str | None = Field(default=None, foreign_key="users.id")
 
