@@ -124,6 +124,7 @@ async def create_document(
                 review_date=document.review_date,
                 editable=document.editable,
                 summary=document.summary,
+                file_type=file_type,
                 tags=[tag.name for tag in document.tags],
             )
     except Exception as e:
@@ -171,6 +172,7 @@ def _get_document(id: str) -> DocumentGet:
             thumbnail=document.thumbnail,
             review_date=document.review_date,
             editable=document.editable,
+            file_type=document.file_type,
             summary=document.summary,
             tags=[tag.name for tag in document.tags],
         )
@@ -189,6 +191,7 @@ def _get_documents():
                 thumbnail=document.thumbnail,
                 review_date=document.review_date,
                 editable=document.editable,
+                file_type=document.file_type,
                 summary=document.summary,
                 tags=[tag.name for tag in document.tags],
             )

@@ -43,4 +43,5 @@ class DocumentGet(SQLModel):
     review_date: datetime | None = None
     editable: bool | None = None
     summary: str | None = None
+    file_type: str | None = None
     tags: list[str] | None = None
