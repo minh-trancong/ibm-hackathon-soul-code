@@ -21,28 +21,28 @@ parameters_sum = {
     GenParams.DECODING_METHOD: "greedy",
     GenParams.MAX_NEW_TOKENS: 5000,
     GenParams.STOP_SEQUENCES: ["\n\n"],
-    GenParams.TEMPERATURE: 0
+    GenParams.TEMPERATURE: 0,
 }
 
 parameters_chat = {
     GenParams.DECODING_METHOD: "greedy",
-    GenParams.MAX_NEW_TOKENS: 1000,
+    GenParams.MAX_NEW_TOKENS: 4000,
     GenParams.REPETITION_PENALTY: 1.05,
-    GenParams.STOP_SEQUENCES: ["\n\n"]
+    GenParams.TEMPERATURE: 1,
 }
 model_id = ModelTypes.GRANITE_13B_CHAT_V2
 model_sum = Model(
     model_id=model_id,
     params=parameters_sum,
     credentials=credentials,
-    project_id=project_id
+    project_id=project_id,
 )
 
 model_chat = Model(
     model_id=model_id,
     params=parameters_chat,
     credentials=credentials,
-    project_id=project_id
+    project_id=project_id,
 )
 
 
@@ -50,32 +50,40 @@ class EmbedModule:
     def __init__(self, apikey=apikey, project_id=project_id, db=Qdrant()):
         embed_params = {
             EmbedParams.TRUNCATE_INPUT_TOKENS: 3,
-            EmbedParams.RETURN_OPTIONS: {
-                'input_text': True
-            }
+            EmbedParams.RETURN_OPTIONS: {"input_text": True},
         }
 
         self.embedding = Embeddings(
             model_id=EmbeddingTypes.IBM_SLATE_30M_ENG,
             params=embed_params,
             credentials=Credentials(
-                api_key=apikey,
-                url="https://us-south.ml.cloud.ibm.com"),
-            project_id=project_id
+                api_key=apikey, url="https://us-south.ml.cloud.ibm.com"
+            ),
+            project_id=project_id,
         )
         self.db = db
 
     def get_embedding(self, text):
         return self.embedding.embed_query(text)
 
-    def post_embed_doc(self, doc_id, user_id, text):
-        chunk_sums = [(self.get_embedding(chunk_sum), chunk_sum) for chunk_sum in chunk_summary(text)]
+    async def post_embed_doc(self, doc_id, user_id, text):
+        chunk_sums = [
+            (self.get_embedding(chunk_sum), chunk_sum)
+            for chunk_sum in chunk_summary(text)
+        ]
         for chunk_sum in chunk_sums:
-            self.db.add_point({'vec': chunk_sum[0], 'doc_id': doc_id, 'user_id': user_id, 'summary': chunk_sum[1]})
+            self.db.add_point(
+                {
+                    "vec": chunk_sum[0],
+                    "doc_id": doc_id,
+                    "user_id": user_id,
+                    "summary": chunk_sum[1],
+                }
+            )
 
     def get_info(self, text):
         embedding = self.get_embedding(text)
-        infos = [point.payload['summary'] for point in self.db.search(embedding)]
+        infos = [point.payload["summary"] for point in self.db.search(embedding)]
         return infos
 
 
@@ -88,7 +96,13 @@ class Session:
         """
 
     def get_response(self, question):
-        info = self.embedModel.get_info(question)
+
+        try:
+            info = self.embedModel.get_info(question)
+
+        except Exception as e:
+            info = []
+
         prompt = "\n Some infomation found from user documents: " + "\n".join(info)
         ques = self.instruction + prompt
         ques += f"\n Input: {question} \nOutput:"
@@ -102,16 +116,22 @@ def doc_summary(file_path):
         text = text[:10000]
     if text == "":
         return "", ""
-    instruction = """
+    instruction = (
+        """
     You are an expert in summarizing documents and generating concise titles and summaries. Your task is to analyze the provided document and create a clear, brief title and summary that captures the main points of the content. Output follow the format:
     {"title": title, "summary": summary}
-    If no documents to summary, answer that format: {"title": "", "summary": ""}
-    """ + f""""
+    If document can not be summarized, answer in this format: {"title": "empty", "summary": "empty"}
+    """
+        + f""""
     Input: {text}
     Output:
     """
+    )
     result = literal_eval(model_sum.generate_text(instruction))
-    title, summary = result['title'], result['summary']
+
+    summary = result["summary"]
+
+    title, summary = result["title"], result["summary"]
     return title, summary, chunks
 
 
@@ -127,21 +147,27 @@ def chunk_summary(chunks):
         Summary: [Provide a clear and brief summary of the document, highlighting the key information and main ideas]
         """
 
-    chunk_sums = [model_sum.generate_text(get_prompt(chunk)).replace("Summary: ", "") for chunk in chunks]
+    chunk_sums = [
+        model_sum.generate_text(get_prompt(chunk)).replace("Summary: ", "")
+        for chunk in chunks
+    ]
     return chunk_sums
 
 
 def get_tags(summary):
     def get_prompt(text):
-        instruction = """
+        instruction = (
+            """
         You are an expert in content categorization, specializing in identifying broad topics and major fields of study. Your task is to analyze the provided document and generate five tags that represent the primary categories or major fields relevant to the document. Please provide the output follow this JSON format:
         ["tag1", "tag2", ...]
-        If no text to get tags answer that: {}
-        """ + f"""
+        If no text to get tags answer that: []
+        """
+            + f"""
         
         Input: {text}
         Output:
         """
+        )
         return instruction
 
     result = literal_eval(model_sum.generate_text(get_prompt(summary)))

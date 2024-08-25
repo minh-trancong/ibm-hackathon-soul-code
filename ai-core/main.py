@@ -19,13 +19,13 @@ def download_file(url, save_dir="./assets"):
     # Kiểm tra trạng thái của phản hồi
     if response.status_code == 200:
         # Lấy tên tệp từ URL
-        filename = url.split('/')[-1]
+        filename = url.split("/")[-1]
 
         # Đường dẫn lưu tệp
         file_path = os.path.join(save_dir, filename)
 
         # Ghi nội dung tệp vào thư mục lưu trữ
-        with open(file_path, 'wb') as file:
+        with open(file_path, "wb") as file:
             file.write(response.content)
 
         print(f"File saved to {file_path}")
@@ -61,30 +61,20 @@ async def get_tags(summary):
     return AICore.get_tags(summary)
 
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
-
-
-@app.get("/hello/{name}")
-async def say_hello(name: str):
-    return {"message": f"Hello {name}"}
-
-
 @app.post("/documents/")
 async def create_document(doc: DocItem):
-    url = doc.doc_url
-    file_path = download_file(url)
+
+    file_path = doc.doc_url
     if file_path is not None:
         title, summary, text = await doc_summary(file_path)
         tags = await get_tags(summary)
         embed_module.post_embed_doc(doc.doc_id, doc.user_id, text)
-        return {'title': title, 'summary': summary, 'tags': tags}
-    return {"title": "", 'summary': "", 'tags': []}
+        return {"title": title, "summary": summary, "tags": tags}
+    return {"title": "", "summary": "", "tags": []}
 
 
-@app.post("/chat/{user_id}")
-async def chat(user_id: int, request: ChatRequest):
+@app.post("/chat")
+async def chat(request: ChatRequest):
     message = request.message
     session = AICore.Session()
     response = session.get_response(message)

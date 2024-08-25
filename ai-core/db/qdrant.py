@@ -10,35 +10,46 @@ client_url = "https://e864e345-b71f-4349-b03d-93f1db8b9468.europe-west3-0.gcp.cl
 
 
 class Qdrant:
-    def __init__(self, apikey=api_key, client_url=client_url, collection_name='soulcode'):
+    def __init__(
+        self, apikey=api_key, client_url=client_url, collection_name="soulcode"
+    ):
         self.embed_size = 384
         self.client = QdrantClient(
             url=client_url,
             api_key=api_key,
         )
         self.collection_name = collection_name
-        self.init_collection()
+        # self.init_collection()
 
     def init_collection(self):
         if not self.client.collection_exists(self.collection_name):
             self.client.create_collection(
                 collection_name=self.collection_name,
-                vectors_config=VectorParams(size=self.embed_size, distance=Distance.COSINE),
+                vectors_config=VectorParams(
+                    size=self.embed_size, distance=Distance.COSINE
+                ),
             )
         else:
             print("Collection already exists")
 
     def add_point(self, point_info):
+        try:
+            vec = point_info["vec"].tolist()
+        except:
+            vec = point_info["vec"]
         self.client.upsert(
             collection_name=self.collection_name,
             points=[
                 PointStruct(
                     id=str(uuid.uuid4()),
-                    vector=point_info["vec"].tolist(),
-                    payload={"user_id": point_info["user_id"], "doc_id": point_info['doc_id'],
-                             'summary': point_info['summary']},
+                    vector=vec,
+                    payload={
+                        "user_id": point_info["user_id"],
+                        "doc_id": point_info["doc_id"],
+                        "summary": point_info["summary"],
+                    },
                 )
-            ]
+            ],
         )
 
     def add_points(self, point_infos):
@@ -48,23 +59,27 @@ class Qdrant:
                 PointStruct(
                     id=str(uuid.uuid4()),
                     vector=point_info["vec"].tolist(),
-                    payload={"user_id": point_info["user_id"], "doc_id": point_info['doc_id'],
-                             'summary': point_info['summary']},
+                    payload={
+                        "user_id": point_info["user_id"],
+                        "doc_id": point_info["doc_id"],
+                        "summary": point_info["summary"],
+                    },
                 )
                 for idx, point_info in enumerate(point_infos)
-            ]
+            ],
         )
 
     def search(self, query_vec):
         hits = self.client.search(
-            collection_name=self.collection_name,
-            query_vector=query_vec,
-            limit=3
+            collection_name=self.collection_name, query_vector=query_vec, limit=3
         )
         if abs(float(hits[0].score)) >= 0:
             result = [hits[0]]
             for idx in range(len(hits) - 1):
-                if abs(abs(float(hits[idx].score)) - abs(float(hits[idx].score))) >= float(hits[idx].score) * 5 / 100:
+                if (
+                    abs(abs(float(hits[idx].score)) - abs(float(hits[idx].score)))
+                    >= float(hits[idx].score) * 5 / 100
+                ):
                     result.append(hits[idx + 1])
             return result
         return []

@@ -1,5 +1,7 @@
 requests~=2.32.2
-fastapi~=0.112.1
+fastapi[standard]~=0.112.1
 pydantic~=2.8.2
 ibm_watsonx_ai~=1.1.6
-langchain~=0.2.14
+qdrant-client
+unstructured-client
+
