@@ -36,6 +36,7 @@
     "domhandler": "^5.0.3",
     "eslint": "8.36.0",
     "eslint-config-next": "13.2.4",
+    "formidable": "^3.5.1",
     "html2canvas": "^1.4.1",
     "http-proxy-middleware": "^2.0.6",
     "next": "13.2.4",
@@ -55,11 +56,14 @@
     "tailwind-scrollbar": "^3.0.0",
     "turndown": "^7.2.0",
     "typescript": "4.9.5",
+    "uuid": "^10.0.0",
     "yarn": "^1.22.19"
   },
   "devDependencies": {
     "@rvxlab/tailwind-plugin-ios-full-height": "^1.1.0",
+    "@types/formidable": "^3.4.5",
     "@types/turndown": "^5.0.5",
+    "@types/uuid": "^10.0.0",
     "autoprefixer": "^10.4.14",
     "postcss": "^8.4.21",
     "postcss-import": "^15.1.0",

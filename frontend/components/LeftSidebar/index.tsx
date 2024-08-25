@@ -76,6 +76,12 @@ const LeftSidebar = ({
             color: "fill-accent-2",
             onClick: () => setVisibleSearch(true),
         },
+        {
+            title: "Search",
+            icon: "search2",
+            color: "fill-accent-2",
+            onClick: () => setVisibleSearch(true),
+        },
         // {
         //     title: "Manage subscription",
         //     icon: "card",

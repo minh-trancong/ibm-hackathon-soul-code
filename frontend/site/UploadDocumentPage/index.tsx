@@ -2,11 +2,15 @@ import React, { useState } from "react";
 import { useRouter } from "next/router";
 import Layout from "@/components/Layout";
 import Icon from "@/components/Icon";
-import Link from "next/link";
+import axios from "axios";
+import { API_ENDPOINTS } from "@/utils/apiConfig";
+import Modal from "@/components/Modal"; // Import the Modal component
 
 const UploadDocumentPage = () => {
     const [link, setLink] = useState<string>("");
     const [files, setFiles] = useState<File[]>([]);
+    const [modalVisible, setModalVisible] = useState<boolean>(false);
+    const [modalMessage, setModalMessage] = useState<string>("");
     const router = useRouter();
 
     const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
@@ -24,9 +28,25 @@ const UploadDocumentPage = () => {
         setLink(event.target.value);
     };
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        // Handle form submission logic here
+        const formData = new FormData();
+        files.forEach((file) => {
+            formData.append("file", file);
+        });
+
+        try {
+            const response = await axios.post(API_ENDPOINTS.UPLOAD_DOCUMENT, formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+            setModalMessage("Document uploaded successfully!");
+            setModalVisible(true);
+        } catch (error) {
+            setModalMessage("Error uploading document.");
+            setModalVisible(true);
+        }
     };
 
     return (
@@ -83,6 +103,9 @@ const UploadDocumentPage = () => {
                     </button>
                 </form>
             </div>
+            <Modal visible={modalVisible} onClose={() => setModalVisible(false)}>
+                {modalMessage}
+            </Modal>
         </Layout>
     );
 };
