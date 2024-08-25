@@ -131,6 +131,11 @@ async def create_document(
         raise HTTPException(status_code=500, detail=f"{str(e)}")
 
 
+@router.post("/review/")
+def review_document(message: str, document_id: str):
+    return core_ai_client.chat_review(document_id=document_id, message=message)
+
+
 @router.get("/{id}")
 def get_document(id: str):
     return _get_document(id)

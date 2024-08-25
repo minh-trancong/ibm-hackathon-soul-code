@@ -29,3 +29,12 @@ class CoreAIClient:
         )
 
         return response.json()
+
+    def chat_review(self, document_id: str, message: str) -> str:
+        chat_review_endpoint = f"{self.endpoint}/chat/review_doc/"
+
+        response = requests.post(
+            chat_review_endpoint, json={"doc_id": document_id, "message": message}
+        )
+
+        return response.json()
