@@ -2,6 +2,9 @@ import os
 from typing import Optional
 from uuid import uuid4
 from fastapi import APIRouter, HTTPException, UploadFile, File, Form, Query
+
+from fastapi.responses import FileResponse
+
 from sqlalchemy import func
 from sqlmodel import select
 
@@ -19,6 +22,17 @@ router = APIRouter()
 FS_PATH = "/var/lib/brain/documents/"
 
 core_ai_client = CoreAIClient()
+
+
+@router.get("/content/{id}")
+def get_document_content(id: str):
+    try:
+        with DBAdapter().get_session() as session:
+            document = session.query(DocumentModel).filter_by(id=id).first()
+
+            return FileResponse(path=document.path)
+    except Exception as e:
+        raise HTTPException(status_code=401, detail="Can not get document")
 
 
 @router.post("/")
