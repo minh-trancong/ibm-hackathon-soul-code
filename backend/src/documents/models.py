@@ -25,6 +25,7 @@ class DocumentModel(SQLModel, table=True):
     review_date: datetime | None = None
     editable: bool | None = None
     summary: str | None = Field(default=None, max_length=65000)
+    file_type: str | None = None
 
     user_id: str | None = Field(default=None, foreign_key="users.id")
 

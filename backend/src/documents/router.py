@@ -67,6 +67,7 @@ async def create_document(
                 title=title,
                 editable=editable,
                 path=file_path,
+                file_type=file_type,
                 user_id=None,
                 thumbnail=None,
                 review_date=None,
