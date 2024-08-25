@@ -69,7 +69,7 @@ async def create_document(doc: DocItem):
         file_type = file_path.split(".")[-1]
         if file_type in ["png", "jpg", "jpeg"]:
             title, summary = await AICore.get_img_detail(file_path)
-            embed_module.post_embed_img(summary)
+            embed_module.post_embed_img(doc.doc_id, doc.user_id, summary)
         else:
             title, summary, text = await doc_summary(file_path)
             embed_module.post_embed_doc(doc.doc_id, doc.user_id, text)
