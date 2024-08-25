@@ -1,10 +1,9 @@
-// frontend/site/DocumentDetailPage/index.tsx
-import React, {useEffect, useRef, useState} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Layout from "@/components/Layout";
 import html2canvas from "html2canvas";
 import TagList from "@/components/TagList";
 import axios from "axios";
-import {API_ENDPOINTS} from "@/utils/apiConfig";
+import { API_ENDPOINTS } from "@/utils/apiConfig";
 
 type DocumentType = {
     id: string;
@@ -18,7 +17,7 @@ type DocumentDetailPageProps = {
     document: DocumentType;
 };
 
-const DocumentDetailPage = ({document}: DocumentDetailPageProps) => {
+const DocumentDetailPage = ({ document }: DocumentDetailPageProps) => {
     const pageRef = useRef<HTMLDivElement>(null);
     const [content, setContent] = useState<string | null>(null);
 
@@ -32,6 +31,9 @@ const DocumentDetailPage = ({document}: DocumentDetailPageProps) => {
                 if (contentType === 'image/png') {
                     const imageUrl = URL.createObjectURL(response.data);
                     setContent(imageUrl);
+                } else if (contentType === 'application/pdf') {
+                    const pdfUrl = URL.createObjectURL(response.data);
+                    setContent(pdfUrl);
                 } else {
                     const textContent = await response.data.text();
                     setContent(textContent);
@@ -70,13 +72,13 @@ const DocumentDetailPage = ({document}: DocumentDetailPageProps) => {
                     <p className="bg-blue-100 border border-blue-500 text-blue-700 p-4">
                         <h2>Summary</h2>
                         {document.summary}
-                        <TagList tags={document.tags} hideViewAll/>
+                        <TagList tags={document.tags} hideViewAll />
                     </p>
                 </div>
                 <div className="content-section">
                     {content && (
                         content.startsWith("blob:") ? (
-                            <img src={content} alt="Document Content" className="custom-img"/>
+                            <iframe src={content} width="100%" height="600px"></iframe>
                         ) : (
                             <code>{content}</code>
                         )

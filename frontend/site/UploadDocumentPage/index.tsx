@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { useRouter } from "next/router";
+import React, {useState} from "react";
+import {useRouter} from "next/router";
 import Layout from "@/components/Layout";
 import Icon from "@/components/Icon";
 import axios from "axios";
-import { API_ENDPOINTS } from "@/utils/apiConfig";
+import {API_ENDPOINTS} from "@/utils/apiConfig";
 import Modal from "@/components/Modal"; // Import the Modal component
 
 const UploadDocumentPage = () => {
@@ -31,6 +31,8 @@ const UploadDocumentPage = () => {
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const formData = new FormData();
+        formData.append('user_id', '5f5e6c37-b453-4686-8742-5c6e223153a7');
+        formData.append('title', 'Untitled Note');
         files.forEach((file) => {
             formData.append("file", file);
         });
@@ -44,7 +46,11 @@ const UploadDocumentPage = () => {
             setModalMessage("Document uploaded successfully!");
             setModalVisible(true);
         } catch (error) {
-            setModalMessage("Error uploading document.");
+            if (axios.isAxiosError(error) && error.response) {
+                setModalMessage("Error uploading document: " + error.response.data);
+            } else {
+                setModalMessage("Error uploading document: " + error);
+            }
             setModalVisible(true);
         }
     };

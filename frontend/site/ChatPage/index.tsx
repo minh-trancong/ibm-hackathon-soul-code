@@ -21,20 +21,19 @@ const ChatPage = () => {
 
     const handleSubmit = async () => {
         setIsLoading(true);
-        setChat([...chat, { type: 'question', content: message }]);
+        const sanitizedMessage = message.replace(/\n+/g, ''); // Remove \n and \n\n
+        setChat([...chat, { type: 'question', content: sanitizedMessage }]);
 
         const response = await fetch(API_ENDPOINTS.CHAT, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ message }),
+            body: JSON.stringify({ message: sanitizedMessage }),
         });
 
-        let data = await response.text();
-        data = data.replace(/\n/g, '<br>');
-
-        setChat([...chat, { type: 'question', content: message }, { type: 'answer', content: <div dangerouslySetInnerHTML={{ __html: data }} /> }]);
+        const data = await response.json();
+        setChat([...chat, { type: 'question', content: sanitizedMessage }, { type: 'answer', content: <div dangerouslySetInnerHTML={{ __html: data }} /> }]);
         setIsLoading(false);
     };
 

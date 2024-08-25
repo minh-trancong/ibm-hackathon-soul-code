@@ -77,10 +77,10 @@ const LeftSidebar = ({
             onClick: () => setVisibleSearch(true),
         },
         {
-            title: "Search",
-            icon: "search2",
+            title: "Learning Language",
+            icon: "dataflow",
             color: "fill-accent-2",
-            onClick: () => setVisibleSearch(true),
+            url: "/learning-language",
         },
         // {
         //     title: "Manage subscription",
