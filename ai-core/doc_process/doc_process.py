@@ -1,10 +1,7 @@
-import pandas as pd
-import PyPDF2
-import pandas as pd
-from docx import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 import unstructured_client
 from unstructured_client.models import operations, shared
+
 
 def extract_text(file_path):
     client = unstructured_client.UnstructuredClient(
@@ -38,7 +35,8 @@ def extract_text(file_path):
         return text, chunks
     except Exception as e:
         print(e)
-        return None
+        return "", []
+
 
 def chunk_text(text, chunk_size=1000, chunk_overlap=100):
     """
@@ -51,6 +49,3 @@ def chunk_text(text, chunk_size=1000, chunk_overlap=100):
     """
     splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
     return splitter.split(text)
-
-text = extract_text("E:\\Users\\nqdhocai\PyCharmProjects\\test\soulcode_coreAI\\assets\\2402.04636v1.pdf")
-print(text)

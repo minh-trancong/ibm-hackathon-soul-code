@@ -1,9 +1,12 @@
+import os
+
+import requests
 from fastapi import FastAPI
 from pydantic import BaseModel
+
 import AICore
-import os
-import requests
 from db.qdrant import Qdrant
+
 
 def download_file(url, save_dir="./assets"):
     # Kiểm tra và tạo thư mục lưu trữ nếu chưa tồn tại
@@ -30,6 +33,8 @@ def download_file(url, save_dir="./assets"):
     else:
         print(f"Failed to download file. Status code: {response.status_code}")
         return None
+
+
 embed_module = AICore.EmbedModule()
 
 app = FastAPI()
@@ -40,12 +45,21 @@ class DocItem(BaseModel):
     user_id: str
     doc_url: str
 
+
+class ChatRequest(BaseModel):
+    message: str
+
+
 DB = Qdrant()
+
+
 async def doc_summary(file_path):
     return AICore.doc_summary(file_path)
 
+
 async def get_tags(summary):
     return AICore.get_tags(summary)
+
 
 @app.get("/")
 async def root():
@@ -68,6 +82,15 @@ async def create_document(doc: DocItem):
         return {'title': title, 'summary': summary, 'tags': tags}
     return {"title": "", 'summary': "", 'tags': []}
 
+
+@app.post("/chat/{user_id}")
+async def chat(user_id: int, request: ChatRequest):
+    message = request.message
+    session = AICore.Session()
+    response = session.get_response(message)
+    return {"message": response}
+
+
 @app.delete("/documents/{document_id}")
 async def delete_document(document_id: str):
     try:
@@ -75,6 +98,7 @@ async def delete_document(document_id: str):
         return {"success": True}
     except:
         return {"success": False}
+
 
 @app.delete("/user/documents")
 async def delete_user_documents(user_id: str):

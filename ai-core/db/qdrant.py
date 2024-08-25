@@ -1,9 +1,9 @@
 import uuid
 
 from qdrant_client import QdrantClient
+from qdrant_client.models import Filter, FilterSelector, MatchValue, FieldCondition
 from qdrant_client.models import PointStruct
 from qdrant_client.models import VectorParams, Distance
-from qdrant_client.models import Filter, FilterSelector, MatchValue, FieldCondition
 
 api_key = "yQdGt_qxJJHxkSqJVixA0C818hXv-4_HQ3B1Hoz1KXP_kYjOTGoEpQ"
 client_url = "https://e864e345-b71f-4349-b03d-93f1db8b9468.europe-west3-0.gcp.cloud.qdrant.io:6333"
@@ -54,6 +54,7 @@ class Qdrant:
                 for idx, point_info in enumerate(point_infos)
             ]
         )
+
     def search(self, query_vec):
         hits = self.client.search(
             collection_name=self.collection_name,
@@ -62,17 +63,17 @@ class Qdrant:
         )
         if abs(float(hits[0].score)) >= 0:
             result = [hits[0]]
-            for idx in range(len(hits)-1):
-                if abs(abs(float(hits[idx].score)) - abs(float(hits[idx].score))) >= float(hits[idx].score)*5/100:
-                    result.append(hits[idx+1])
+            for idx in range(len(hits) - 1):
+                if abs(abs(float(hits[idx].score)) - abs(float(hits[idx].score))) >= float(hits[idx].score) * 5 / 100:
+                    result.append(hits[idx + 1])
             return result
         return []
 
     def delete_by_doc_id(self, doc_id):
         self.client.delete(
             collection_name=self.collection_name,
-            points_selector= FilterSelector(
-                filter= Filter(
+            points_selector=FilterSelector(
+                filter=Filter(
                     must=[
                         FieldCondition(
                             key="doc_id",
@@ -83,11 +84,12 @@ class Qdrant:
             ),
         )
         print("Deleted doc_id: {}".format(doc_id))
+
     def delete_by_user_id(self, user_id):
         self.client.delete(
             collection_name=self.collection_name,
-            points_selector= FilterSelector(
-                filter= Filter(
+            points_selector=FilterSelector(
+                filter=Filter(
                     must=[
                         FieldCondition(
                             key="user_id",
