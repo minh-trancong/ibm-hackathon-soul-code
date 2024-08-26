@@ -113,7 +113,9 @@ async def create_document(
             document.title = ai_info["title"]
             document.summary = ai_info["summary"]
             document.tags = ai_tag_models
-            document.vocabs= ai_info["vocabs"]
+            document.vocabs = ai_info["vocabs"]
+            print(document.vocabs)
+
 
             session.commit()
 
