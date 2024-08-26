@@ -21,12 +21,12 @@ class DocItem(BaseModel):
 
 class ChatRequest(BaseModel):
     message: str
-    user_id: str
+    user_id: str = "guest"
 
 class ChatRVRequest(BaseModel):
     message: str
     doc_id: str
-    user_id: str
+    user_id: str = "guest"
 
 
 async def doc_summary(file_path):
