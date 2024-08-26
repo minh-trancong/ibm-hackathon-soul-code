@@ -1,4 +1,10 @@
-# Alembic migration script in `backend/alembic/versions/<new_revision_id>.py`
+"""empty message
+
+Revision ID: mtc26082122
+Revises: 9acdee3328d1
+Create Date: 2024-08-26 12:12:36.462290
+
+"""
 from alembic import op
 import sqlalchemy as sa
 
