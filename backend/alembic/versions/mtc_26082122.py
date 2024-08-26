@@ -1,9 +1,9 @@
-# New Alembic migration script in `backend/alembic/versions/<new_revision_id>.py`
+# Alembic migration script in `backend/alembic/versions/<new_revision_id>.py`
 from alembic import op
 import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
-revision = 'mtc-26-08-21-22'
+revision = 'mtc_26082122'  # Updated revision identifier
 down_revision = '9acdee3328d1'
 branch_labels = None
 depends_on = None
