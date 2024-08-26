@@ -1,0 +1,7 @@
+alembic 
+fastapi[all]
+sqlmodel
+pymysql
+cryptography
+python-magic
+requests

@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="38018ba0-28bb-4d90-b7bc-1d2389d7b9f7" name="Changes" comment="remove node modules" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="2l5zBQsnH4y2l96B1FFzrcNbcpA" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "feat/user-interface",
+    "last_opened_file_path": "/Users/minh/Codespace/github/ibm-hackathon-soul-code/frontend/mocks",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "yarn",
+    "ts.external.directory.path": "/Applications/WebStorm.app/Contents/plugins/javascript-impl/jsLanguageServicesImpl/external",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/mocks" />
+      <recent name="$PROJECT_DIR$/pages" />
+      <recent name="$PROJECT_DIR$/constants" />
+      <recent name="$PROJECT_DIR$/site" />
+      <recent name="$PROJECT_DIR$" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/public/images" />
+      <recent name="$PROJECT_DIR$/public/logos" />
+      <recent name="$PROJECT_DIR$/site/ViewAllTags" />
+      <recent name="$PROJECT_DIR$/public/icons" />
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-1d06a55b98c1-985749b364ce-JavaScript-WS-233.15325.18" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="38018ba0-28bb-4d90-b7bc-1d2389d7b9f7" name="Changes" comment="" />
+      <created>1724484589810</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1724484589810</updated>
+      <workItem from="1724484592071" duration="37470000" />
+      <workItem from="1724533370792" duration="660000" />
+      <workItem from="1724573603293" duration="18016000" />
+      <workItem from="1724656677323" duration="5227000" />
+    </task>
+    <task id="LOCAL-00001" summary="inital template">
+      <option name="closed" value="true" />
+      <created>1724493087622</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1724493087622</updated>
+    </task>
+    <task id="LOCAL-00002" summary="feat(document-page): add document first page ✨">
+      <option name="closed" value="true" />
+      <created>1724507868803</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1724507868803</updated>
+    </task>
+    <task id="LOCAL-00003" summary="feat (icon): change icon left bar">
+      <option name="closed" value="true" />
+      <created>1724510387458</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1724510387458</updated>
+    </task>
+    <task id="LOCAL-00004" summary="feat (upload-document): add upload document ✨">
+      <option name="closed" value="true" />
+      <created>1724510925399</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1724510925399</updated>
+    </task>
+    <task id="LOCAL-00005" summary="feat (review): add chat with spaced repetition through button active recall ✨">
+      <option name="closed" value="true" />
+      <created>1724523623031</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1724523623031</updated>
+    </task>
+    <task id="LOCAL-00006" summary="feat (document): hover to show buttons each document ✨">
+      <option name="closed" value="true" />
+      <created>1724524093861</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1724524093861</updated>
+    </task>
+    <task id="LOCAL-00007" summary="feat (document): add document details page ✨">
+      <option name="closed" value="true" />
+      <created>1724528993412</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1724528993412</updated>
+    </task>
+    <task id="LOCAL-00008" summary="feat (document): add document details page ✨">
+      <option name="closed" value="true" />
+      <created>1724587277821</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1724587277821</updated>
+    </task>
+    <task id="LOCAL-00009" summary="feat(upload): ok">
+      <option name="closed" value="true" />
+      <created>1724594264100</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1724594264100</updated>
+    </task>
+    <task id="LOCAL-00010" summary="add gitignore">
+      <option name="closed" value="true" />
+      <created>1724660920218</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1724660920218</updated>
+    </task>
+    <task id="LOCAL-00011" summary="remove .next">
+      <option name="closed" value="true" />
+      <created>1724660964815</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1724660964815</updated>
+    </task>
+    <task id="LOCAL-00012" summary="remove node modules">
+      <option name="closed" value="true" />
+      <created>1724661070915</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1724661070915</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="inital template" />
+    <MESSAGE value="feat(document-page): add document first page ✨" />
+    <MESSAGE value="feat (icon): change icon left bar" />
+    <MESSAGE value="feat (upload-document): add upload document ✨" />
+    <MESSAGE value="feat (review): add chat with spaced repetition through button active recall ✨" />
+    <MESSAGE value="feat (document): hover to show buttons each document ✨" />
+    <MESSAGE value="feat (document): add document details page ✨" />
+    <MESSAGE value="feat(upload): ok" />
+    <MESSAGE value="add gitignore" />
+    <MESSAGE value="remove .next" />
+    <MESSAGE value="remove node modules" />
+    <option name="LAST_COMMIT_MESSAGE" value="remove node modules" />
+  </component>
+</project>
