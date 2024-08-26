@@ -14,6 +14,8 @@ import { chatList } from "@/mocks/chatList";
 import { resultSearch } from "@/mocks/resultSearch";
 import { settings } from "@/constants/settings";
 import { twMerge } from "tailwind-merge";
+import {API_ENDPOINTS} from "@/utils/apiConfig";
+import axios from "axios";
 
 type LeftSidebarProps = {
     value: boolean;
@@ -30,6 +32,20 @@ const LeftSidebar = ({
 }: LeftSidebarProps) => {
     const [visibleSearch, setVisibleSearch] = useState<boolean>(false);
     const [visibleSettings, setVisibleSettings] = useState<boolean>(false);
+    const [documents, setDocuments] = useState([]);
+
+    useEffect(() => {
+        const fetchDocuments = async () => {
+            try {
+                const response = await axios.get(API_ENDPOINTS.GET_DOCUMENT);
+                setDocuments(response.data);
+            } catch (error) {
+                console.error('Error fetching documents:', error);
+            }
+        };
+
+        fetchDocuments();
+    }, []);
 
     useEffect(() => {
         window.addEventListener("keydown", handleWindowKeyDown);
@@ -156,7 +172,7 @@ const LeftSidebar = ({
                 visible={visibleSearch}
                 onClose={() => setVisibleSearch(false)}
             >
-                <Search items={resultSearch} />
+                <Search items={documents} />
             </Modal>
             <Modal
                 className="md:!p-0"

@@ -52,13 +52,14 @@ const Settings = ({ items, activeItem }: SettingsProps) => {
                     </div>
                 )}
                 <div className="grow pl-12 md:pl-0">
+                    <h1>This feature is under development</h1>
                     {active.id === "edit-profile" && <EditProfile />}
                     {active.id === "password" && <Password />}
                     {active.id === "notifications" && <Notifications />}
                     {active.id === "chat-export" && <ChatExport />}
                     {active.id === "sessions" && <Sessions />}
                     {active.id === "applications" && <Applications />}
-                    {active.id === "team" && <Team />}
+                    {/*{active.id === "team" && <Team />}*/}
                     {active.id === "appearance" && <Appearance />}
                     {active.id === "delete-account" && <DeleteAccount />}
                 </div>

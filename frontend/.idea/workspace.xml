@@ -4,14 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="38018ba0-28bb-4d90-b7bc-1d2389d7b9f7" name="Changes" comment="remove node modules">
-      <change afterPath="$PROJECT_DIR$/pages/chat.tsx" afterDir="false" />
+    <list default="true" id="38018ba0-28bb-4d90-b7bc-1d2389d7b9f7" name="Changes" comment="add url router ok for homepage">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/components/LeftSidebar/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/LeftSidebar/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mocks/applications.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/mocks/applications.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/home.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/home.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/pages/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/site/HomePage/Home/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/site/HomePage/Home/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/Search/Item/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/Search/Item/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/Search/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/Search/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/Settings/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/Settings/index.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -86,7 +84,7 @@
       <workItem from="1724533370792" duration="660000" />
       <workItem from="1724573603293" duration="18016000" />
       <workItem from="1724656677323" duration="5227000" />
-      <workItem from="1724672031017" duration="331000" />
+      <workItem from="1724672031017" duration="4159000" />
     </task>
     <task id="LOCAL-00001" summary="inital template">
       <option name="closed" value="true" />
@@ -184,7 +182,15 @@
       <option name="project" value="LOCAL" />
       <updated>1724661070915</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="add url router ok for homepage">
+      <option name="closed" value="true" />
+      <created>1724672784679</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1724672784679</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -215,6 +221,7 @@
     <MESSAGE value="remove .next" />
     <MESSAGE value="remove node modules" />
     <MESSAGE value="fix(backend-api-url): change api router ending with trailing " />
-    <option name="LAST_COMMIT_MESSAGE" value="fix(backend-api-url): change api router ending with trailing " />
+    <MESSAGE value="add url router ok for homepage" />
+    <option name="LAST_COMMIT_MESSAGE" value="add url router ok for homepage" />
   </component>
 </project>

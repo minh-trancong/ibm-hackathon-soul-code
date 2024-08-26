@@ -1,7 +1,16 @@
+// frontend/components/Search/index.tsx
 import { useState } from "react";
 import Icon from "@/components/Icon";
 import Select from "@/components/Select";
 import Item from "./Item";
+
+export type DocumentType = {
+    id: string;
+    image: string;
+    title: string;
+    summary: string;
+    tags: string[];
+};
 
 const createdOptions = [
     {
@@ -33,26 +42,8 @@ const dates = [
     },
 ];
 
-type ItemsType = {
-    id: string;
-    author: string;
-    title: string;
-    content: string;
-    time: string;
-    avatar: string;
-    online: boolean;
-    url: string;
-};
-
-type SearchType = {
-    id: string;
-    title: string;
-    date?: string;
-    list: ItemsType[];
-};
-
 type SearchProps = {
-    items: SearchType[];
+    items: DocumentType[];
 };
 
 const Search = ({ items }: SearchProps) => {
@@ -60,6 +51,10 @@ const Search = ({ items }: SearchProps) => {
     const [searchTitle, setSearchTitle] = useState<string>("");
     const [createdBy, setCreatedBy] = useState<any>();
     const [date, setDate] = useState<any>();
+
+    const filteredItems = items.filter(item =>
+        item.title && item.title.toLowerCase().includes(search.toLowerCase())
+    );
 
     return (
         <form className="" action="" onSubmit={() => console.log("Submit")}>
@@ -131,7 +126,7 @@ const Search = ({ items }: SearchProps) => {
                     />
                 </div>
                 <div>
-                    {items.map((x) => (
+                    {filteredItems.map((x) => (
                         <Item item={x} key={x.id} />
                     ))}
                 </div>
