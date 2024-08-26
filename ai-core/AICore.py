@@ -175,7 +175,7 @@ class ReviewDocModule:
 
 async def get_vocab(doc):
     if doc == "":
-        return {'num':0, 'input_language': '', 'learning_language': '', 'content': [{'no': 1, 'words': '', 'words-language': {}, 'meaning': '', 'example': ''}]}
+        return {"num":0,"input_language":"","learning_language":["English","German"],"content":[]}
     if len(doc) >= 2000:
         doc = doc[:2000]
     input = """Extract collocations to study in this paragraph. Doing exactly following these steps:
@@ -275,7 +275,7 @@ async def get_vocab(doc):
         vocabs = literal_eval(model_vc.generate_text(input))
     except Exception as e:
         print(e)
-        vocabs = {'num':0, 'input_language': '', 'learning_language': '', 'content': [{'no': 1, 'words': '', 'words-language': {}, 'meaning': '', 'example': ''}]}
+        vocabs = {"num":0,"input_language":"","learning_language":["English","German"],"content":[]}
     return vocabs
 def doc_summary(file_path):
     text = extract_text(file_path)
