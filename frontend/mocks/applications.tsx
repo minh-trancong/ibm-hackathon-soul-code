@@ -1,3 +1,5 @@
+// frontend/mocks/applications.tsx
+
 export const applications = [
     {
         id: "0",
@@ -6,6 +8,7 @@ export const applications = [
         image: "/icons/upload.svg",
         date: "Mar 2023",
         installed: true,
+        url: "/upload-document",
     },
     {
         id: "1",
@@ -14,6 +17,7 @@ export const applications = [
         image: "/icons/collections.svg",
         date: "Mar 2023",
         installed: true,
+        url: "/documents",
     },
     {
         id: "2",
@@ -22,6 +26,7 @@ export const applications = [
         image: "/icons/tag.svg",
         date: "Mar 2023",
         installed: true,
+        url: "/view-all-tags",
     },
     {
         id: "3",
@@ -30,6 +35,7 @@ export const applications = [
         image: "/icons/chat.svg",
         date: "Mar 2023",
         installed: true,
+        url: "/chat",
     },
     {
         id: "4",
@@ -38,6 +44,7 @@ export const applications = [
         image: "/icons/calendar.svg",
         date: "Mar 2023",
         installed: true,
+        url: "/review-documents",
     },
     {
         id: "5",
@@ -46,5 +53,6 @@ export const applications = [
         image: "/icons/country.svg",
         date: "Mar 2023",
         installed: true,
+        url: "/learning-language",
     }
 ];
