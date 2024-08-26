@@ -1,6 +1,6 @@
 // utils/apiConfig.ts
 
-const base_url = 'http://14.225.205.181:8000';
+const base_url = 'https://api.soulcode.minhtc.dev';
 export const API_ENDPOINTS = {
     UPLOAD_DOCUMENT: `${base_url}/documents/`,
     TAGS: `${base_url}/tags`,
