@@ -14,6 +14,8 @@ import { chatList } from "@/mocks/chatList";
 import { resultSearch } from "@/mocks/resultSearch";
 import { settings } from "@/constants/settings";
 import { twMerge } from "tailwind-merge";
+import {API_ENDPOINTS} from "@/utils/apiConfig";
+import axios from "axios";
 
 type LeftSidebarProps = {
     value: boolean;
@@ -30,6 +32,20 @@ const LeftSidebar = ({
 }: LeftSidebarProps) => {
     const [visibleSearch, setVisibleSearch] = useState<boolean>(false);
     const [visibleSettings, setVisibleSettings] = useState<boolean>(false);
+    const [documents, setDocuments] = useState([]);
+
+    useEffect(() => {
+        const fetchDocuments = async () => {
+            try {
+                const response = await axios.get(API_ENDPOINTS.GET_DOCUMENT);
+                setDocuments(response.data);
+            } catch (error) {
+                console.error('Error fetching documents:', error);
+            }
+        };
+
+        fetchDocuments();
+    }, []);
 
     useEffect(() => {
         window.addEventListener("keydown", handleWindowKeyDown);
@@ -68,7 +84,7 @@ const LeftSidebar = ({
             title: "Chats",
             icon: "ai",
             color: "fill-accent-2",
-            url: "/",
+            url: "/chat",
         },
         {
             title: "Search",
@@ -141,7 +157,7 @@ const LeftSidebar = ({
                             value ? "-mx-4 md:mx-0" : "-mx-2 md:mx-0"
                         }`}
                     ></div>
-                    <ChatList visible={value} items={chatList} />
+                    {/*<ChatList visible={value} items={chatList} />*/}
                 </div>
                 <div className="absolute left-0 bottom-0 right-0 pb-6 px-4 bg-n-7 before:absolute before:left-0 before:right-0 before:bottom-full before:h-10 before:bg-gradient-to-t before:from-[#131617] before:to-[rgba(19,22,23,0)] before:pointer-events-none md:px-3">
                     <Profile visible={value} />
@@ -156,7 +172,7 @@ const LeftSidebar = ({
                 visible={visibleSearch}
                 onClose={() => setVisibleSearch(false)}
             >
-                <Search items={resultSearch} />
+                <Search items={documents} />
             </Modal>
             <Modal
                 className="md:!p-0"

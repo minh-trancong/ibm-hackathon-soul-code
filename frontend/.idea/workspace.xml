@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="38018ba0-28bb-4d90-b7bc-1d2389d7b9f7" name="Changes" comment="remove node modules" />
+    <list default="true" id="38018ba0-28bb-4d90-b7bc-1d2389d7b9f7" name="Changes" comment="add search" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -12,6 +12,24 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings">
+    <option name="recentNewPullRequestHead">
+      <RepoCoordinatesHolder>
+        <option name="owner" value="minh-trancong" />
+        <option name="repository" value="ibm-hackathon-soul-code" />
+      </RepoCoordinatesHolder>
+    </option>
+    <option name="selectedUrlAndAccountId">
+      <UrlAndAccount>
+        <option name="accountId" value="331818f3-af95-4ed4-a79c-46ccf25964f4" />
+        <option name="url" value="git@github.com:minh-trancong/ibm-hackathon-soul-code.git" />
+      </UrlAndAccount>
+    </option>
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -27,22 +45,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "feat/user-interface",
-    "last_opened_file_path": "/Users/minh/Codespace/github/ibm-hackathon-soul-code/frontend/mocks",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "yarn",
-    "ts.external.directory.path": "/Applications/WebStorm.app/Contents/plugins/javascript-impl/jsLanguageServicesImpl/external",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feat/user-interface&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/minh/Codespace/github/ibm-hackathon-soul-code/frontend/mocks&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;yarn&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/Users/minh/Codespace/github/ibm-hackathon-soul-code/frontend/node_modules/typescript/lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/mocks" />
@@ -78,6 +96,7 @@
       <workItem from="1724533370792" duration="660000" />
       <workItem from="1724573603293" duration="18016000" />
       <workItem from="1724656677323" duration="5227000" />
+      <workItem from="1724672031017" duration="4341000" />
     </task>
     <task id="LOCAL-00001" summary="inital template">
       <option name="closed" value="true" />
@@ -175,11 +194,38 @@
       <option name="project" value="LOCAL" />
       <updated>1724661070915</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="add url router ok for homepage">
+      <option name="closed" value="true" />
+      <created>1724672784679</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1724672784679</updated>
+    </task>
+    <task id="LOCAL-00014" summary="add search">
+      <option name="closed" value="true" />
+      <created>1724679751234</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1724679751234</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
@@ -194,6 +240,9 @@
     <MESSAGE value="add gitignore" />
     <MESSAGE value="remove .next" />
     <MESSAGE value="remove node modules" />
-    <option name="LAST_COMMIT_MESSAGE" value="remove node modules" />
+    <MESSAGE value="fix(backend-api-url): change api router ending with trailing " />
+    <MESSAGE value="add url router ok for homepage" />
+    <MESSAGE value="add search" />
+    <option name="LAST_COMMIT_MESSAGE" value="add search" />
   </component>
 </project>
