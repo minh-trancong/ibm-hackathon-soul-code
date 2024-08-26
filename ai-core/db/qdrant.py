@@ -47,11 +47,13 @@ class Qdrant:
                         "user_id": point_info["user_id"],
                         "doc_id": point_info["doc_id"],
                         "summary": point_info["summary"],
+                        "doc_title": point_info['doc_title'],
+                        "doc_summary": point_info['doc_summary']
                     },
                 )
             ],
         )
-    def search_by_doc_id(self, vec, doc_id):
+    def search_by_doc_id(self, vec, doc_id, user_id):
         hits = self.client.search(
             collection_name=self.collection_name,
             query_vector=vec,
@@ -60,10 +62,14 @@ class Qdrant:
                     FieldCondition(
                         key="doc_id",
                         match=MatchValue(doc_id)
+                    ),
+                    FieldCondition(
+                        key="user_id",
+                        match=MatchValue(user_id)
                     )
                 ]
             ),
-            limit=3
+            limit=5
         )
 
     def add_points(self, point_infos):
@@ -77,6 +83,8 @@ class Qdrant:
                         "user_id": point_info["user_id"],
                         "doc_id": point_info["doc_id"],
                         "summary": point_info["summary"],
+                        "doc_title": point_info['doc_title'],
+                        "doc_summary": point_info['doc_summary']
                     },
                 )
                 for idx, point_info in enumerate(point_infos)

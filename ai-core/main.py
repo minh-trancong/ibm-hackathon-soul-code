@@ -21,11 +21,12 @@ class DocItem(BaseModel):
 
 class ChatRequest(BaseModel):
     message: str
-
+    user_id: str
 
 class ChatRVRequest(BaseModel):
     message: str
     doc_id: str
+    user_id: str
 
 
 async def doc_summary(file_path):
@@ -43,7 +44,7 @@ async def create_document(doc: DocItem):
             await embed_module.post_embed_img(doc.doc_id, doc.user_id, summary)
         else:
             title, summary, tags, doc_text = await doc_summary(file_path)
-            await embed_module.post_embed_doc(doc.doc_id, doc.user_id, doc_text)
+            await embed_module.post_embed_doc(doc.doc_id, doc.user_id, doc_text, title, summary)
         return {"title": title, "summary": summary, "tags": tags}
     return {"title": "", "summary": "", "tags": []}
 
@@ -52,7 +53,7 @@ async def create_document(doc: DocItem):
 async def chat(request: ChatRequest):
     message = request.message
     session = AICore.Session()
-    response = session.get_response(message)
+    response = session.get_response(request.user_id, message)
     return {"message": response}
 
 
@@ -61,7 +62,7 @@ async def chat_review_doc(request: ChatRVRequest):
     review_module = AICore.ReviewDocModule
     message = request.message
     eb_text = embed_module.get_embedding(message)
-    info = DB.search_by_doc_id(eb_text, request.doc_id)
+    info = DB.search_by_doc_id(eb_text, request.doc_id, request.user_id)
     response = review_module.get_response(message, info)
     return {"message": response}
 

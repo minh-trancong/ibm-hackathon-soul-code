@@ -36,6 +36,14 @@ parameters_chat = {
     GenParams.STOP_SEQUENCES: ["\n\n"],
 }
 
+parameters_rv = {
+    GenParams.DECODING_METHOD: "greedy",
+    GenParams.MAX_NEW_TOKENS: 500,
+    GenParams.REPETITION_PENALTY: 1,
+    GenParams.TEMPERATURE: 0.5,
+    GenParams.STOP_SEQUENCES: ["\n\n"],
+}
+
 model_id = ModelTypes.GRANITE_13B_CHAT_V2
 model_sum = Model(
     model_id=model_id,
@@ -50,8 +58,15 @@ model_chat = Model(
     credentials=credentials,
     project_id=project_id,
 )
+
+model_rv = Model(
+    model_id=ModelTypes.GRANITE_13B_INSTRUCT_V2,
+    params=parameters_rv,
+    credentials=credentials,
+    project_id=project_id,
+)
 class EmbedModule:
-    def __init__(self, db, apikey=apikey, project_id=project_id):
+    def __init__(self, db=Qdrant(), apikey=apikey, project_id=project_id):
         embed_params = {
             EmbedParams.TRUNCATE_INPUT_TOKENS: 3,
             EmbedParams.RETURN_OPTIONS: {"input_text": True},
@@ -70,7 +85,7 @@ class EmbedModule:
     def get_embedding(self, text):
         return self.embedding.embed_query(text)
 
-    async def post_embed_doc(self, doc_id, user_id, text):
+    async def post_embed_doc(self, doc_id, user_id, text, doc_title, doc_summary):
         chunks = chunk_docs(text)
         chunk_points = [(self.get_embedding(chunk), chunk) for chunk in chunks]
         self.db.add_points(
@@ -79,6 +94,8 @@ class EmbedModule:
                 "doc_id": doc_id,
                 "user_id": user_id,
                 "summary": chunk_sum[1],
+                "doc_title": doc_title,
+                "doc_summary": doc_summary
             } for chunk_sum in chunk_points]
         )
 
@@ -107,35 +124,37 @@ class Session:
         You are Soulcode, an AI language model designed for the Second Brain platform. You are a cautious assistant who meticulously follows instructions. You are helpful, harmless, and adhere strictly to ethical guidelines while promoting positive behavior. You always respond to greetings (e.g., "hi," "hello," "good day," "morning," "afternoon," "evening," "night," "what's up," "nice to meet you," "sup," etc.) with "Hello! I am Soulcode, your virtual assistant on Second Brain. How can I assist you today?" Please do not say anything else and do not initiate conversations. Short answer.
         """
 
-    def get_response(self, question):
+    def get_response(self,user_id, question):
 
         try:
-            info = self.embedModel.get_info(question)
+            info = self.embedModel.get_info(user_id, question)
 
         except Exception as e:
             info = []
 
-        prompt = "\n Some infomation found from user documents: " + "\n".join(info)
+        prompt = "\n Some information found from user documents: " + "\n".join(info)
         ques = self.instruction + prompt
         ques += f"\n Input: {question} \nOutput:"
         return self.model.generate_text(ques)
 
 
 class ReviewDocModule:
-    def __init__(self, doc, model_chat=model_chat, min_doc_size=10000):
-        self.model = model_chat
+    def __init__(self, doc, model_rv=model_rv, min_doc_size=10000):
+        self.model = model_rv
         self.min_doc_size = min_doc_size
         self.doc_size = len(doc)
         self.doc = doc
 
     def get_response(self, question, info):
-        doc = "\n".join([point.payload["summary"] for point in info])
+        doc = "\n".join(["doc title: "+ point.payload["doc_title"] + "\ndoc summary:" + point.payload['doc_summary'] + "\ndoc content:" + point.payload["summary"] for point in info])
         instruction = f"""
-        You are Soulcode, an AI language model designed for the Second Brain platform. You are a cautious assistant who meticulously follows instructions. You are helpful, harmless, and adhere strictly to ethical guidelines while promoting positive behavior. You always respond to greetings (e.g., "hi," "hello," "good day," "morning," "afternoon," "evening," "night," "what's up," "nice to meet you," "sup," etc.) with "Hello! I am Soulcode, your virtual assistant on Second Brain. How can I assist you today?" Please do not say anything else and do not initiate conversations. Short answer.
-        Here is the documentation related to the user's question that you can refer to:
+        You are Soulcode, an AI language model designed for the Second Brain platform. Answer the following question using only information from the article. If there is no good answer in the article, say I don't know.
+        Article: 
+        ###
         {doc}
-        Input: {question} 
-        Output:
+        ###
+        Question: {question} 
+        Answer:
         """
         return self.model.generate_text(instruction)
 
