@@ -17,7 +17,7 @@ const Item = ({ item }: ItemProps) => (
             >
                 <div className="flex flex-col ml-5 w-full">
                     <div className="h6">
-                        {item.title ? (item.title.length > 30 ? item.title.substring(0, 30) + "..." : item.title) : ""}
+                        {item.title ? (item.title.length > 30 ? item.title.substring(0, 90) + "..." : item.title) : ""}
                     </div>
                     <div className="caption1 text-n-4/75">
                         {item.summary ? (item.summary.length > 100 ? item.summary.substring(0, 200) + "..." : item.summary) : ""}
