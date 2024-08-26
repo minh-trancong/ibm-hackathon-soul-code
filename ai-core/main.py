@@ -35,18 +35,20 @@ async def doc_summary(file_path):
 
 @app.post("/documents/")
 async def create_document(doc: DocItem):
-    logging.info(f"Received payload: {doc}")
-    file_path = doc.doc_url
-    if file_path is not None:
+    try:
+        file_path = doc.doc_url
         file_type = file_path.split(".")[-1]
         if file_type in ["png", "jpg", "jpeg"]:
             title, summary, tags = await AICore.get_img_detail(file_path)
             await embed_module.post_embed_img(doc.doc_id, doc.user_id, summary)
+            vocabs = AICore.get_vocab("")
         else:
             title, summary, tags, doc_text = await doc_summary(file_path)
             await embed_module.post_embed_doc(doc.doc_id, doc.user_id, doc_text, title, summary)
-        return {"title": title, "summary": summary, "tags": tags}
-    return {"title": "", "summary": "", "tags": []}
+            vocabs = await AICore.get_vocab(doc_text)
+        return {"title": title, "summary": summary, "tags": tags, "vocabs": vocabs}
+    except:
+        return {"title": "", "summary": "", "tags": [], "vocabs": AICore.get_vocab("")}
 
 
 @app.post("/chat")

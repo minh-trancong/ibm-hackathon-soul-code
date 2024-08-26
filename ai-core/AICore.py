@@ -23,7 +23,7 @@ credentials = {
 }
 parameters_sum = {
     GenParams.DECODING_METHOD: "greedy",
-    GenParams.MAX_NEW_TOKENS: 5000,
+    GenParams.MAX_NEW_TOKENS: 2000,
     GenParams.STOP_SEQUENCES: ["\n\n"],
     GenParams.TEMPERATURE: 0,
 }
@@ -41,6 +41,14 @@ parameters_rv = {
     GenParams.MAX_NEW_TOKENS: 500,
     GenParams.REPETITION_PENALTY: 1,
     GenParams.TEMPERATURE: 0.5,
+    GenParams.STOP_SEQUENCES: ["\n\n"],
+}
+
+parameters_vc = {
+    GenParams.DECODING_METHOD: "greedy",
+    GenParams.MAX_NEW_TOKENS: 3000,
+    GenParams.REPETITION_PENALTY: 1,
+    GenParams.TEMPERATURE: 0,
     GenParams.STOP_SEQUENCES: ["\n\n"],
 }
 
@@ -62,6 +70,13 @@ model_chat = Model(
 model_rv = Model(
     model_id=ModelTypes.GRANITE_13B_INSTRUCT_V2,
     params=parameters_rv,
+    credentials=credentials,
+    project_id=project_id,
+)
+
+model_vc = Model(
+    model_id=ModelTypes.GRANITE_20B_MULTILINGUAL,
+    params=parameters_vc,
     credentials=credentials,
     project_id=project_id,
 )
@@ -158,7 +173,110 @@ class ReviewDocModule:
         """
         return self.model.generate_text(instruction)
 
-
+async def get_vocab(doc):
+    if doc == "":
+        return {'num':0, 'input_language': '', 'learning_language': '', 'content': [{'no': 1, 'words': '', 'words-language': {}, 'meaning': '', 'example': ''}]}
+    if len(doc) >= 2000:
+        doc = doc[:2000]
+    input = """Extract collocations to study in this paragraph. Doing exactly following these steps:
+    Step 1: Determine 5 phrases that are Uncommon, Natural, Accurate, Diverse, and Appropriate and store in num with 5.
+    Step 2: Determine input_language of original paragraph and thinking about meaning in this language.
+    Step 3: Determin learning_language from ["English",   "French","Spanish", "German"], but except input_language
+    Step 4: Extract sentence to make an example.
+    Step 5: Output in form of JSON with fields.
+    
+    REMEMBER to only ouput the Step 5. The ouput always below 2000 tokens and ends with character } . Always ends with character } to stop.
+    
+    
+    Question: Article: 
+    ###
+    The Unexpected Journey
+    
+    After weeks of meticulous planning, Emily finally embarked on her solo backpacking trip across Southeast Asia. She had always dreamed of immersing herself in the vibrant cultures and breathtaking landscapes of the region. With her backpack securely fastened and a sense of trepidation mixed with excitement, she boarded the plane, ready to embrace the unknown.
+    
+    Upon arriving in Bangkok, Emily was immediately struck by the bustling energy of the city. The streets were teeming with life, and the air was thick with the aroma of street food. She spent her first few days exploring the city'''s iconic temples and indulging in the local cuisine. One evening, while wandering through a night market, she stumbled upon a hidden gem: a cozy little bar tucked away down a side street. Inside, she met a group of fellow travelers who quickly became her fast friends.
+    
+    Together, they ventured off the beaten path, exploring remote villages and trekking through lush jungles. They shared stories, laughter, and unforgettable experiences. Along the way, Emily learned to overcome her fears and embrace the unexpected. She discovered hidden talents, forged lifelong friendships, and gained a newfound appreciation for the beauty of the world.
+    
+    As her journey drew to a close, Emily realized that she had not only explored new places but also discovered new facets of herself. She returned home with a heart full of gratitude and a mind brimming with memories. The trip had been a transformative experience, one that she would cherish forever.
+    ###
+    Answer: {"num":5,"input_language":"English","learning_language":["French","German"],"content":[{"no":1,"words":"meticulous planning","words-language":{"French":"planification méticuleuse","German":"sorgfältige Planung"},"meaning":"Planning very carefully, paying attention to every small detail.","example":"After weeks of **meticulous planning**, Emily finally embarked on her solo backpacking trip across Southeast Asia."},{"no":2,"words":"embarked on","words-language":{"French":"s'''est lancé dans","German":"sich auf etwas eingelassen"},"meaning":"Started a journey or a new experience.","example":"After weeks of meticulous planning, Emily finally **embarked on** her solo backpacking trip across Southeast Asia."},{"no":3,"words":"vibrant cultures","words-language":{"French":"cultures vibrantes","German":"lebendige Kulturen"},"meaning":"Cultures that are full of life, energy, and excitement.","example":"She had always dreamed of immersing herself in the **vibrant cultures** and breathtaking landscapes of the region."},{"no":4,"words":"breathtaking landscapes","words-language":{"French":"paysages à couper le souffle","German":"atemberaubende Landschaften"},"meaning":"Scenery so beautiful that it takes your breath away.","example":"She had always dreamed of immersing herself in the vibrant cultures and **breathtaking landscapes** of the region."},{"no":5,"words":"a sense of trepidation","words-language":{"French":"un sentiment d'''appréhension","German":"ein Gefühl der Beklommenheit"},"meaning":"A feeling of fear or worry about something that is going to happen.","example":"With her backpack securely fastened and **a sense of trepidation** mixed with excitement, she boarded the plane, ready to embrace the unknown."}]}
+    
+    Question: Article:
+    ###
+    "La Tour Eiffel, symbole emblématique de Paris, s'''élève majestueusement au-dessus de la ville. Sa silhouette élancée, illuminée chaque soir, offre un spectacle à couper le souffle. Les visiteurs peuvent gravir ses marches ou prendre l'''ascenseur pour admirer une vue panoramique imprenable sur la capitale française. De nombreux artistes et écrivains ont été inspirés par cette merveille architecturale, et elle continue d'''enchanter les gens du monde entier."
+    ###
+    Answer: {"num":5,"input_language":"French","learning_language":["English","German"],"content":[{"no":1,"words":"symbole emblématique","words-language":{"English":"iconic symbol","German":"Wahrzeichen"},"meaning":"Un symbole largement reconnu et représentatif d'''un lieu, d'''une idée ou d'''une culture.","example":"La Tour Eiffel, **symbole emblématique** de Paris, s'''élève majestueusement au-dessus de la ville."},{"no":2,"words":"s'''élève majestueusement","words-language":{"English":"rises majestically","German":"erhebt sich majestätisch"},"meaning":"S'''élever avec grandeur et dignité, de manière impressionnante.","example":"La Tour Eiffel, symbole emblématique de Paris, **s'''élève majestueusement** au-dessus de la ville."},{"no":3,"words":"silhouette élancée","words-language":{"English":"slender silhouette","German":"schlanke Silhouette"},"meaning":"Une forme allongée et fine, élégante et gracieuse.","example":"Sa **silhouette élancée**, illuminée chaque soir, offre un spectacle à couper le souffle."},{"no":4,"words":"spectacle à couper le souffle","words-language":{"English":"breathtaking spectacle","German":"atemberaubender Anblick"},"meaning":"Un spectacle si beau ou impressionnant qu'''il vous laisse sans voix.","example":"Sa silhouette élancée, illuminée chaque soir, offre un **spectacle à couper le souffle**."},{"no":5,"words":"vue panoramique imprenable","words-language":{"English":"unobstructed panoramic view","German":"unverbaubarer Panoramablick"},"meaning":"Une vue étendue et dégagée sur un paysage.","example":"Les visiteurs peuvent gravir ses marches ou prendre l'''ascenseur pour admirer une **vue panoramique imprenable** sur la capitale française."}]}
+    
+    Question: Article:
+    ###
+    Die Zugspitze, Deutschlands höchster Berg, ist ein atemberaubendes Naturwunder. Mit ihren majestätischen Gipfeln und schneebedeckten Hängen bietet sie eine unvergleichliche Aussicht auf die umliegende Landschaft. Besucher können mit der Seilbahn auf den Gipfel fahren oder sich auf eine anspruchsvolle Wanderung begeben, um die Schönheit der Alpen hautnah zu erleben. Die Zugspitze ist ein beliebtes Ziel für Outdoor-Enthusiasten, die sich für Skifahren, Wandern und Klettern begeistern.
+    ###
+    Answer: {"num":5,"input_language":"German","learning_language":["English","French"],"content":[{"no":1,"words":"höchster Berg","words-language":{"English":"highest mountain","French":"plus haute montagne"},"meaning":"Der Berg mit der größten Höhe in einem bestimmten Gebiet.","example":"Die Zugspitze, Deutschlands **höchster Berg**, ist ein atemberaubendes Naturwunder."},{"no":2,"words":"atemberaubendes Naturwunder","words-language":{"English":"breathtaking natural wonder","French":"merveille naturelle à couper le souffle"},"meaning":"Ein beeindruckendes Naturschauspiel, das Ehrfurcht und Staunen hervorruft.","example":"Die Zugspitze, Deutschlands höchster Berg, ist ein **atemberaubendes Naturwunder**."},{"no":3,"words":"majestätischen Gipfeln","words-language":{"English":"majestic peaks","French":"sommets majestueux"},"meaning":"Die höchsten Punkte eines Berges, die durch ihre Größe und Schönheit beeindrucken.","example":"Mit ihren **majestätischen Gipfeln** und schneebedeckten Hängen bietet sie eine unvergleichliche Aussicht auf die umliegende Landschaft."},{"no":4,"words":"unvergleichliche Aussicht","words-language":{"English":"incomparable view","French":"vue incomparable"},"meaning":"Eine Aussicht, die so schön oder einzigartig ist, dass sie mit nichts anderem verglichen werden kann.","example":"Mit ihren majestätischen Gipfeln und schneebedeckten Hängen bietet sie eine **unvergleichliche Aussicht** auf die umliegende Landschaft."},{"no":5,"words":"anspruchsvolle Wanderung","words-language":{"English":"challenging hike","French":"randonnée exigeante"},"meaning":"Eine Wanderung, die aufgrund ihrer Länge, Steigung oder des Geländes körperlich anstrengend ist.","example":"Besucher können mit der Seilbahn auf den Gipfel fahren oder sich auf eine **anspruchsvolle Wanderung** begeben, um die Schönheit der Alpen hautnah zu erleben."}]}
+    
+    Question: Article:
+    ###
+    La Seine, fleuve emblématique de Paris, serpente gracieusement à travers la ville, offrant des vues pittoresques et romantiques. Ses rives sont bordées de monuments historiques, de musées renommés et de charmants cafés. Les bateaux-mouches glissent paisiblement sur ses eaux, permettant aux visiteurs d'''admirer la beauté de la capitale sous un angle différent.
+    ###
+    Answer: {"num":5,"input_language":"French","learning_language":["English","German"],"content":[{"no":1,"words":"fleuve emblématique","words-language":{"English":"iconic river","German":"bedeutender Fluss"},"meaning":"Un fleuve largement reconnu et représentatif d'''une ville ou d'''une région.","example":"La Seine, **fleuve emblématique** de Paris, serpente gracieusement à travers la ville."},{"no":2,"words":"serpente gracieusement","words-language":{"English":"winds gracefully","German":"schlängelt sich anmutig"},"meaning":"Coule de manière sinueuse et élégante.","example":"La Seine, fleuve emblématique de Paris, **serpente gracieusement** à travers la ville."},{"no":3,"words":"vues pittoresques","words-language":{"English":"picturesque views","German":"malerische Ausblicke"},"meaning":"Paysages charmants et dignes d'''être peints.","example":"La Seine, fleuve emblématique de Paris, serpente gracieusement à travers la ville, offrant des **vues pittoresques** et romantiques."},{"no":4,"words":"monuments historiques","words-language":{"English":"historical monuments","German":"historische Denkmäler"},"meaning":"Bâtiments ou structures anciens ayant une importance historique.","example":"Ses rives sont bordées de **monuments historiques**, de musées renommés et de charmants cafés."},{"no":5,"words":"glissent paisiblement","words-language":{"English":"glide peacefully","German":"gleiten friedlich"},"meaning":"Se déplacent doucement et calmement sur l'''eau.","example":"Les bateaux-mouches **glissent paisiblement** sur ses eaux, permettant aux visiteurs d'''admirer la beauté de la capitale sous un angle différent."}]}
+    
+    Question: Article:
+    ###
+    AdventureLog: Self Hosted Travel Tracker and Planner
+    Hi r/selfhosted!
+    
+    I am super excited to announce the release of AdventureLog. Having done a lot of travel recently I have always wanted to keep track of the places I have visited on a map and plan out new trips. AdventureLog does exactly that. Here are some of the key features:
+    
+    Features:
+    📕 Log past visits and future plans with information like location, date, rating and activities. And place it as a pin on the map.
+    
+    This can also be done automatically with a Geocoding API.
+    
+    🔗 Group your ideas and visits into collections. You can then plan a trip by adding things like restaurants, hotels, and flight information. You can also keep notes of important links and make checklists to make sure the trip goes smoothly!
+    
+    You can also share collections via a link to make group travel planning easier than ever!
+    
+    🌎 Mark your visits to countries and regions as you explore the globe!
+    
+    🗺️ View your travels on a map to visualize your travels
+    
+    🔎 Search your adventures or search adventures published by other users.
+    
+    If you have any questions feel free to reach out to me or open an issue on the GitHub repo!
+    
+    Links
+    GitHub Repo
+    
+    Hosted Version
+    
+    Install Documentation
+    
+    I would love to hear any feedback or suggestions!
+    
+    Edit:
+    Thanks so much everyone for the positive feedback and support! There is a lot of great discussion here. I would like to layout my plan moving forward and what the priorities are:
+    
+    Helping people get the app deployed (sorry if the setup is confusing I am trying to figure out how to simplify it)
+    
+    Working on bug fixes
+    
+    Adding new features
+    
+    AdventureLog is my first ever development project and I learned how to code to in order to build AdventureLog, for this reason there are some quirks that I have been working out along the way. I always felt like a self-hostable alterative for something like Wanderlog was missing and this is what I hope AdventureLog fulfills. My time is going to be constrained soon with school but I will make sure to make AdventureLog a stable and strong open-source project. It would be super useful to add any requests/bugs to the GitHub repo issues so I can add them to my project tracker. I'''m sorry if there is frustration trying to deploy it, but I hope to keep making the process easier in the future. As with any project, feel free to contribute, spread the word and, and brainstorm ideas.
+    
+    This is only the start of AdventureLog, thanks so much!
+    ### \n""" + f"""
+        \nQuestion: Article:
+        ###
+        {doc}
+        ###
+        Answer:"""
+    try:
+        vocabs = literal_eval(model_vc.generate_text(input))
+    except Exception as e:
+        print(e)
+        vocabs = {'num':0, 'input_language': '', 'learning_language': '', 'content': [{'no': 1, 'words': '', 'words-language': {}, 'meaning': '', 'example': ''}]}
+    return vocabs
 def doc_summary(file_path):
     text = extract_text(file_path)
     doc = text
@@ -168,17 +286,22 @@ def doc_summary(file_path):
         return "", ""
     instruction = """Input: You are an expert in summarizing documents and generating concise titles and summaries and tags. Your task is to analyze the provided document and create a clear, brief title and summary that captures the main points of the content and five tags of this documents. Output follow the format:
         {"title": title, "summary": summary, "tags":[]}
-My document: Programs and software are created by coders using different software tools, known as programming software. Some such programs used for software development by coders are as given below-
+My document: 
+###
+Programs and software are created by coders using different software tools, known as programming software. Some such programs used for software development by coders are as given below-
 
 Compilers – The conversion of codes written by humans into lower-level machine code is performed by compilers. These machine codes can be interpreted directly by computer hardware. While compilers serve a very basic purpose, they are the basis for creating even the most complicated and sophisticated software.
 Debuggers – Debuggers play an essential role in ensuring your software or application performs well by testing and debugging the computer code.
 Linkers – Linkers are responsible for combining various individual files from a compiler into a single executable file. The file converted, as a result, runs on its own without requiring a programming environment.
 Malware – Malware is software developed to attack computers and their software in a harmful way to cause them to misbehave or seize to work. This includes viruses, ransomware, trojans, and worms. Since there are a variety of malware that may be mistakenly downloaded, it is crucial to have antimalware software on your computer to keep it safe from their attacks.
+###
 Output:  {"title": "Essential Software Tools for Software Development: Compilers, Debuggers, and Linkers", "summary": "Compilers, Debuggers, and Linkers are crucial software tools used in software development. Compilers convert human-readable code into machine code, Debuggers test and debug code, and Linkers combine individual files into a single executable file. Additionally, understanding the importance of antimalware software is essential to protect computers from harmful software attacks.", "tags": ["software development", "programming software", "compilers", "debuggers", "linkers", "malware"]}
 
 Input: You are an expert in summarizing documents and generating concise titles and summaries and tags. Your task is to analyze the provided document and create a clear, brief title and summary that captures the main points of the content and five tags of this documents. Output follow the format:
         {"title": title, "summary": summary, "tags":[]}
-My document:""" + text + "\nOutput:"
+My document: 
+###
+""" + text + "\n###\nOutput:"
     try:
         result = literal_eval(model_sum.generate_text(instruction))
     except Exception as e:
@@ -223,76 +346,3 @@ def chunk_summary(chunks):
 #         result = []
 #     return result
 
-def get_vocab(doc):
-    input = """Extract 10 collocations to study in this paragraph. Doing exactly following these steps:
-    Step 1: Think in this articles of phrases that are Uncommon, Natural, Accurate, Diverse, and Appropriate, but identify the 10 most fitting ones that are Uncommon, Natural, Accurate, Diverse, and Appropriate.
-    Step 2: For each collocations, thinking about meaning in this context (only in this context), and answer for children understand
-    Step 3: Extract sentence to make an example.
-    Step 4: Output in form of JSON with fields: no, words, meaning, example.
-
-    REMEMBER to only ouput the Step 4. The ouput always below 1000 tokens and ends with character ] . Always ends with character ] to stop.
-
-
-    Question: Article: 
-    ###
-    The Unexpected Journey
-
-    After weeks of meticulous planning, Emily finally embarked on her solo backpacking trip across Southeast Asia. She had always dreamed of immersing herself in the vibrant cultures and breathtaking landscapes of the region. With her backpack securely fastened and a sense of trepidation mixed with excitement, she boarded the plane, ready to embrace the unknown.
-
-    Upon arriving in Bangkok, Emily was immediately struck by the bustling energy of the city. The streets were teeming with life, and the air was thick with the aroma of street food. She spent her first few days exploring the city'''s iconic temples and indulging in the local cuisine. One evening, while wandering through a night market, she stumbled upon a hidden gem: a cozy little bar tucked away down a side street. Inside, she met a group of fellow travelers who quickly became her fast friends.
-
-    Together, they ventured off the beaten path, exploring remote villages and trekking through lush jungles. They shared stories, laughter, and unforgettable experiences. Along the way, Emily learned to overcome her fears and embrace the unexpected. She discovered hidden talents, forged lifelong friendships, and gained a newfound appreciation for the beauty of the world.
-
-    As her journey drew to a close, Emily realized that she had not only explored new places but also discovered new facets of herself. She returned home with a heart full of gratitude and a mind brimming with memories. The trip had been a transformative experience, one that she would cherish forever.
-    ###
-    Answer: [
-    {"no": 1, "words": "meticulous planning", "meaning": "Planning very carefully, paying attention to every small detail.", "example": "After weeks of meticulous planning, Emily finally embarked on her solo backpacking trip across Southeast Asia."},
-    {"no": 2, "words": "embarked on", "meaning": "Started a journey or a new experience.", "example": "After weeks of meticulous planning, Emily finally embarked on her solo backpacking trip across Southeast Asia."},
-    {"no": 3, "words": "vibrant cultures", "meaning": "Cultures that are full of life, energy, and excitement.", "example": "She had always dreamed of immersing herself in the vibrant cultures and breathtaking landscapes of the region."},
-    {"no": 4, "words": "breathtaking landscapes", "meaning": "Scenery so beautiful that it takes your breath away.", "example": "She had always dreamed of immersing herself in the vibrant cultures and breathtaking landscapes of the region."},
-    {"no": 5, "words": "securely fastened", "meaning": "Attached or tied very tightly so it won'''t come loose.", "example": "With her backpack securely fastened and a sense of trepidation mixed with excitement, she boarded the plane, ready to embrace the unknown."},
-    {"no": 6, "words": "a sense of trepidation", "meaning": "A feeling of fear or worry about something that is going to happen.", "example": "With her backpack securely fastened and a sense of trepidation mixed with excitement, she boarded the plane, ready to embrace the unknown."},
-    {"no": 7, "words": "embrace the unknown", "meaning": "To accept and welcome new and unfamiliar experiences.", "example": "With her backpack securely fastened and a sense of trepidation mixed with excitement, she boarded the plane, ready to embrace the unknown."},
-    {"no": 8, "words": "bustling energy", "meaning": "Full of activity and excitement.", "example": "Upon arriving in Bangkok, Emily was immediately struck by the bustling energy of the city."},
-    {"no": 9, "words": "teeming with life", "meaning": "Full of people and activity.", "example": "The streets were teeming with life, and the air was thick with the aroma of street food."},
-    {"no": 10, "words": "iconic temples", "meaning": "Temples that are very famous and represent the city or culture.", "example": "She spent her first few days exploring the city'''s iconic temples and indulging in the local cuisine."}
-    ]
-
-    Question: Article:
-    ###
-    The City That Never Sleeps
-
-    New York City, a bustling metropolis teeming with life, is a place where dreams are made and ambitions soar. The city'''s iconic skyline, dominated by towering skyscrapers, is a testament to human ingenuity and perseverance. From the bright lights of Times Square to the tranquil oasis of Central Park, the city offers a myriad of experiences that cater to every taste and interest.
-
-    Visitors can immerse themselves in the vibrant cultural scene, exploring world-class museums, attending Broadway shows, or simply people-watching in one of the city'''s many cafes. Foodies can indulge in a culinary adventure, sampling everything from authentic ethnic cuisine to Michelin-starred restaurants. And for those seeking a bit of retail therapy, the city'''s endless shopping options are sure to satisfy even the most discerning shopper.
-
-    New York is a city that never sleeps, with a vibrant nightlife scene that keeps the energy flowing well into the early hours. Whether you'''re looking to dance the night away in a trendy club, catch a live music performance in a cozy bar, or simply enjoy a quiet drink with friends, the city has something for everyone.
-
-    Beyond its attractions, New York is a city of resilience and spirit. It has weathered its share of challenges, from economic downturns to natural disasters, but it always emerges stronger and more vibrant than ever. The city'''s diverse population, hailing from all corners of the globe, contributes to its unique character and unwavering energy.
-
-    New York City is a place that captures the imagination and leaves a lasting impression. It is a city of dreams, a city of possibilities, and a city that will forever hold a special place in the hearts of those who have experienced its magic.
-    ###
-    Answer: [
-    {"no": 1, "words": "bustling metropolis", "meaning": "a very large and busy city", "example": "New York City, a bustling metropolis teeming with life, is a place where dreams are made and ambitions soar."},
-    {"no": 2, "words": "teeming with life", "meaning": "full of people and activity", "example": "New York City, a bustling metropolis teeming with life, is a place where dreams are made and ambitions soar."},
-    {"no": 3, "words": "dreams are made", "meaning": "people can achieve their goals and wishes", "example": "New York City, a bustling metropolis teeming with life, is a place where dreams are made and ambitions soar."},
-    {"no": 4, "words": "ambitions soar", "meaning": "people have big hopes and dreams", "example": "New York City, a bustling metropolis teeming with life, is a place where dreams are made and ambitions soar."},
-    {"no": 5, "words": "iconic skyline", "meaning": "the easily recognizable outline of buildings against the sky", "example": "The city'''s iconic skyline, dominated by towering skyscrapers, is a testament to human ingenuity and perseverance."},
-    {"no": 6, "words": "towering skyscrapers", "meaning": "very tall buildings", "example": "The city'''s iconic skyline, dominated by towering skyscrapers, is a testament to human ingenuity and perseverance."},
-    {"no": 7, "words": "human ingenuity", "meaning": "the ability of people to invent and create clever things", "example": "The city'''s iconic skyline, dominated by towering skyscrapers, is a testament to human ingenuity and perseverance."},
-    {"no": 8, "words": "bright lights", "meaning": "the colorful and dazzling lights of the city", "example": "From the bright lights of Times Square to the tranquil oasis of Central Park, the city offers a myriad of experiences that cater to every taste and interest."},
-    {"no": 9, "words": "tranquil oasis", "meaning": "a calm and peaceful place in the middle of a busy area", "example": "From the bright lights of Times Square to the tranquil oasis of Central Park, the city offers a myriad of experiences that cater to every taste and interest."},
-    {"no": 10, "words": "a myriad of experiences", "meaning": "a large variety of different things to see and do", "example": "From the bright lights of Times Square to the tranquil oasis of Central Park, the city offers a myriad of experiences that cater to every taste and interest."}
-    ]
-    """ + f"""
-    Question: Article:
-    ###
-    {doc}
-    ###
-    Answer:"""
-    try:
-        vocab = literal_eval(model_sum.generate_text(input))
-    except:
-        vocab = {"no": 0, "words": "", "meaning": "", "example": ""},
-
-    return vocab
