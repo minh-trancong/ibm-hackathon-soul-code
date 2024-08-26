@@ -1,17 +1,66 @@
-import { useState } from "react";
+// site/DocumentsPage/index.tsx
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Layout from "@/components/Layout";
 import Icon from "@/components/Icon";
 import { documentOptions } from "@/constants/document-options";
-import { tagOptions } from "@/constants/tag-options";
 import HorizontalMenu from "@/components/HorizontalMenu";
 import TagList from "@/components/TagList";
 import Card from "@/components/Card";
-import { documents } from "@/mocks/documents"; // Import the documents data
+import DocumentDetailPage from "@/site/DocumentDetailPage";
+import { DocumentType } from "@/types/DocumentType";
+import { API_ENDPOINTS } from "@/utils/apiConfig";
+import axios from "axios";
+import { Tag } from '@/site/ViewAllTagsPage';
 
 const DocumentsPage = () => {
     const [search, setSearch] = useState<string>("");
     const router = useRouter();
+    const { id } = router.query;
+    const [document, setDocument] = useState<DocumentType | null>(null);
+    const [documents, setDocuments] = useState<DocumentType[]>([]);
+    const [tags, setTags] = useState<string[]>([]);
+
+    const getRandomTags = (tags: Tag[], count: number): Tag[] => {
+        const shuffled = tags.sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, count);
+    };
+
+    useEffect(() => {
+        if (id) {
+            const doc = documents.find((doc) => doc.id === id);
+            setDocument(doc || null);
+        }
+    }, [id, documents]);
+
+    useEffect(() => {
+        const fetchDocuments = async () => {
+            try {
+                const response = await axios.get(API_ENDPOINTS.GET_DOCUMENT);
+                setDocuments(response.data);
+            } catch (error) {
+                console.error('Error fetching documents:', error);
+            }
+        };
+
+        const fetchTags = async () => {
+            try {
+                const response = await axios.get(API_ENDPOINTS.TAGS);
+                const randomTags = getRandomTags(response.data, 6);
+                const tagNames = randomTags.map(tag => tag.name === '-1' ? 'DOC_NO_TAGS' : tag.name);
+                setTags(tagNames);
+            } catch (error) {
+                console.error('Error fetching tags:', error);
+            }
+        };
+
+        fetchDocuments();
+        fetchTags();
+    }, []);
+
+    if (id && document) {
+        return <DocumentDetailPage document={document} />;
+    }
 
     return (
         <Layout hideRightSidebar>
@@ -34,7 +83,7 @@ const DocumentsPage = () => {
                         items={documentOptions}
                     />
                 </div>
-                <TagList tags={tagOptions}/>
+                <TagList tags={tags}/> {/* Update to use fetched random tags */}
                 <div className="mb-2 h6 text-n-4 md:mb-6">Your Documents</div>
                 <div className="flex flex-wrap -mx-4">
                     {documents.map((doc, index) => (

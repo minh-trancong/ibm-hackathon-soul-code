@@ -1,8 +1,8 @@
 import type { NextPage } from "next";
-import HomePage from "@/templates/HomePage";
+import ChatPage from "@/site/ChatPage";
 
-const Home: NextPage = () => {
-    return <HomePage />;
+const ChatPageContainer: NextPage = () => {
+    return <ChatPage />;
 };
 
-export default Home;
+export default ChatPageContainer;
