@@ -26,6 +26,7 @@ class DocumentModel(SQLModel, table=True):
     editable: bool | None = None
     summary: str | None = Field(default=None, max_length=2000)
     file_type: str | None = None
+    vocabs: str | None = None  # New field to store JSON data
 
     user_id: str | None = Field(default=None, foreign_key="users.id")
 
@@ -33,7 +34,6 @@ class DocumentModel(SQLModel, table=True):
         back_populates="documents",
         link_model=DocumentTagModel,
     )
-
 
 class DocumentGet(SQLModel):
     id: str
@@ -45,3 +45,4 @@ class DocumentGet(SQLModel):
     summary: str | None = None
     file_type: str | None = None
     tags: list[str] | None = None
+    vocabs: str | None = None

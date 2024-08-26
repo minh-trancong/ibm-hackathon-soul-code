@@ -113,6 +113,7 @@ async def create_document(
             document.title = ai_info["title"]
             document.summary = ai_info["summary"]
             document.tags = ai_tag_models
+            document.vocabs= ai_info["vocabs"]
 
             session.commit()
 
@@ -126,6 +127,7 @@ async def create_document(
                 summary=document.summary,
                 file_type=file_type,
                 tags=[tag.name for tag in document.tags],
+                vocabs=document.vocabs,
             )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"{str(e)}")
