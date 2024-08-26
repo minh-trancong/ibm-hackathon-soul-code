@@ -16,7 +16,7 @@ class CoreAIClient:
 
         chat_endpoint = f"{self.endpoint}/chat/"
 
-        response = requests.post(chat_endpoint, json={"message": message})
+        response = requests.post(chat_endpoint, json={"message": message, "user_id": "1"})
 
         return response.json()["message"]
 
