@@ -3,40 +3,12 @@ import os
 import requests
 from fastapi import FastAPI
 from pydantic import BaseModel
-
+import logging
 import AICore
 from db.qdrant import Qdrant
-from doc_process.doc_process import extract_text
 
-
-def download_file(url, save_dir="./assets"):
-    # Kiểm tra và tạo thư mục lưu trữ nếu chưa tồn tại
-    if not os.path.exists(save_dir):
-        os.makedirs(save_dir)
-
-    # Tải tệp từ URL
-    response = requests.get(url, stream=True)
-
-    # Kiểm tra trạng thái của phản hồi
-    if response.status_code == 200:
-        # Lấy tên tệp từ URL
-        filename = url.split("/")[-1]
-
-        # Đường dẫn lưu tệp
-        file_path = os.path.join(save_dir, filename)
-
-        # Ghi nội dung tệp vào thư mục lưu trữ
-        with open(file_path, "wb") as file:
-            file.write(response.content)
-
-        print(f"File saved to {file_path}")
-        return file_path
-    else:
-        print(f"Failed to download file. Status code: {response.status_code}")
-        return None
-
-
-embed_module = AICore.EmbedModule()
+DB = Qdrant()
+embed_module = AICore.EmbedModule(db=DB)
 
 app = FastAPI()
 
@@ -50,33 +22,28 @@ class DocItem(BaseModel):
 class ChatRequest(BaseModel):
     message: str
 
+
 class ChatRVRequest(BaseModel):
     message: str
     doc_id: str
-
-DB = Qdrant()
 
 
 async def doc_summary(file_path):
     return AICore.doc_summary(file_path)
 
 
-async def get_tags(summary):
-    return AICore.get_tags(summary)
-
-
 @app.post("/documents/")
 async def create_document(doc: DocItem):
+    logging.info(f"Received payload: {doc}")
     file_path = doc.doc_url
     if file_path is not None:
         file_type = file_path.split(".")[-1]
         if file_type in ["png", "jpg", "jpeg"]:
-            title, summary = await AICore.get_img_detail(file_path)
-            embed_module.post_embed_img(doc.doc_id, doc.user_id, summary)
+            title, summary, tags = await AICore.get_img_detail(file_path)
+            await embed_module.post_embed_img(doc.doc_id, doc.user_id, summary)
         else:
-            title, summary, text = await doc_summary(file_path)
-            embed_module.post_embed_doc(doc.doc_id, doc.user_id, text)
-        tags = await get_tags(summary)
+            title, summary, tags, doc_text = await doc_summary(file_path)
+            await embed_module.post_embed_doc(doc.doc_id, doc.user_id, doc_text)
         return {"title": title, "summary": summary, "tags": tags}
     return {"title": "", "summary": "", "tags": []}
 
@@ -88,6 +55,7 @@ async def chat(request: ChatRequest):
     response = session.get_response(message)
     return {"message": response}
 
+
 @app.post("/chat/review_doc")
 async def chat_review_doc(request: ChatRVRequest):
     review_module = AICore.ReviewDocModule
@@ -96,6 +64,7 @@ async def chat_review_doc(request: ChatRVRequest):
     info = DB.search_by_doc_id(eb_text, request.doc_id)
     response = review_module.get_response(message, info)
     return {"message": response}
+
 
 @app.delete("/documents/{document_id}")
 async def delete_document(document_id: str):

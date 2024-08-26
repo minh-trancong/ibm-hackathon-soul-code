@@ -19,7 +19,7 @@ class Qdrant:
             api_key=api_key,
         )
         self.collection_name = collection_name
-        # self.init_collection()
+        self.init_collection()
 
     def init_collection(self):
         if not self.client.collection_exists(self.collection_name):
@@ -51,6 +51,20 @@ class Qdrant:
                 )
             ],
         )
+    def search_by_doc_id(self, vec, doc_id):
+        hits = self.client.search(
+            collection_name=self.collection_name,
+            query_vector=vec,
+            query_filter=Filter(
+                must=[
+                    FieldCondition(
+                        key="doc_id",
+                        match=MatchValue(doc_id)
+                    )
+                ]
+            ),
+            limit=3
+        )
 
     def add_points(self, point_infos):
         self.client.upsert(
@@ -58,7 +72,7 @@ class Qdrant:
             points=[
                 PointStruct(
                     id=str(uuid.uuid4()),
-                    vector=point_info["vec"].tolist(),
+                    vector=point_info["vec"],
                     payload={
                         "user_id": point_info["user_id"],
                         "doc_id": point_info["doc_id"],
@@ -69,9 +83,19 @@ class Qdrant:
             ],
         )
 
-    def search(self, query_vec):
+    def search_by_user_id(self,user_id, query_vec):
         hits = self.client.search(
-            collection_name=self.collection_name, query_vector=query_vec, limit=3
+            collection_name=self.collection_name,
+            query_vector=query_vec,
+            query_filter=Filter(
+                must=[
+                    FieldCondition(
+                        key="user_id",
+                        match=MatchValue(user_id)
+                    )
+                ]
+            ),
+            limit=3
         )
         if abs(float(hits[0].score)) >= 0:
             result = [hits[0]]
