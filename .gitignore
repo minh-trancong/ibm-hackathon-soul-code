@@ -1,0 +1,7 @@
+.DS_Store
+.next
+frontend/.next
+.DS_Store
+**/.DS_Store
+frontend/node_modules
+frontend/.idea

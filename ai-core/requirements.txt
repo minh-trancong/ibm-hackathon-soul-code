@@ -1,0 +1,10 @@
+requests~=2.32.2
+fastapi~=0.112.1
+pydantic~=2.8.2
+ibm_watsonx_ai~=1.1.6
+unstructured-client
+qdrant-client
+pillow~=10.4.0
+google-generativeai
+nltk~=3.9.1
+PyPDF2~=3.0.1
